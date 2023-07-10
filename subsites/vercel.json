@@ -1,8 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/:path*",
+      "source": "/",
       "destination": "https://side-domains.vercel.app/for-sale"
+    },
+    {
+      "source": "/:path*",
+      "destination": "https://side-domains.vercel.app/:path*"
     }
   ]
 }
