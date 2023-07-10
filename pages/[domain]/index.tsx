@@ -1,4 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { SendIcon } from 'lucide-react'
+import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from '~/components/ui/button'
@@ -7,35 +9,39 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
-import { SendIcon } from 'lucide-react'
-import LoadingDots from '~/components/loading-dots'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 const formSchema = z.object({
   email: z.string().email(),
   offer: z.coerce.number().min(0).or(z.literal('')),
 })
 
-export const getServerSideProps: GetServerSideProps<{}> = async (ctx) => {
-  console.log('ctx:', ctx)
+export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    props: {
-      query: ctx.query,
-      headers: ctx.req.headers,
-    },
+    paths: [
+      {
+        params: {
+          domain: 'buy.alaister.dev',
+        },
+      },
+    ],
+    fallback: 'blocking',
   }
 }
 
-const ForSalePage = (
-  props: InferGetServerSidePropsType<typeof getServerSideProps>
-) => {
-  console.log('props:', props)
-  const domainName = 'example.com'
+export const getStaticProps: GetStaticProps<{ domain: string }> = async ({
+  params,
+}) => {
+  return {
+    props: { domain: params.domain as string },
+  }
+}
 
+const ForSalePage = ({
+  domain: domainName,
+}: InferGetStaticPropsType<typeof getStaticProps>) => {
   const form = useForm<z.infer<typeof formSchema>>({
     defaultValues: {
       email: '',
