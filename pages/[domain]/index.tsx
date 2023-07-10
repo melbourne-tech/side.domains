@@ -3,6 +3,8 @@ import { SendIcon } from 'lucide-react'
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import DomainsBackground from '~/components/domains-background'
+import InfiniteDomainScroller from '~/components/infinite-domain-scroller'
 import { Button } from '~/components/ui/button'
 import {
   Form,
@@ -51,8 +53,10 @@ const ForSalePage = ({
   })
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-full bg-gray-50">
-      <div className="bg-white shadow-lg rounded-lg p-4 space-y-6">
+    <div className="flex flex-col items-center justify-center min-h-full">
+      <DomainsBackground domainName={domainName} />
+
+      <div className="bg-white shadow-lg rounded-lg p-4 space-y-6 z-10">
         <h1 className="text-4xl font-semibold leading-none tracking-tight">
           {domainName} may be for sale
         </h1>

@@ -7,6 +7,7 @@ import Image from 'next/image'
 import DomainCard from '../components/domain-card'
 import fetcher from '../lib/fetcher'
 import DomainCardPlaceholder from '../components/domain-card-placeholder'
+import InfiniteScroller from '~/components/infinite-domain-scroller'
 
 export default function Home() {
   const [domain, setDomain] = useState('')
