@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { cn } from '~/lib/utils'
 
 export type InfiniteDomainScrollerProps = {
   domainName: string

@@ -1,12 +1,12 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
-import LoadingDots from '../components/loading-dots'
+import LoadingDots from '../../components/loading-dots'
 import toast, { Toaster } from 'react-hot-toast'
 import useSWR from 'swr'
 import Image from 'next/image'
-import DomainCard from '../components/domain-card'
-import fetcher from '../lib/fetcher'
-import DomainCardPlaceholder from '../components/domain-card-placeholder'
+import DomainCard from '../../components/domain-card'
+import fetcher from '../../lib/fetcher'
+import DomainCardPlaceholder from '../../components/domain-card-placeholder'
 import InfiniteScroller from '~/components/infinite-domain-scroller'
 
 export default function Home() {
