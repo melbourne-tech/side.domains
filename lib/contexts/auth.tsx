@@ -1,7 +1,5 @@
 import { Session } from '@supabase/supabase-js'
-import { useRouter } from 'next/router'
 import {
-  ComponentType,
   PropsWithChildren,
   createContext,
   useCallback,
@@ -10,7 +8,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import supabase from './supabase'
+import supabase from '../supabase'
 
 export type AuthContextValue = {
   session: Session | null
@@ -25,7 +23,9 @@ export const AuthContext = createContext<AuthContextValue>({
 })
 
 export const AuthContextProvider = ({ children }: PropsWithChildren<{}>) => {
-  const [state, setState] = useState({
+  const [state, setState] = useState<
+    Pick<AuthContextValue, 'session' | 'isLoading'>
+  >({
     session: null,
     isLoading: true,
   })
@@ -68,6 +68,19 @@ export const AuthContextProvider = ({ children }: PropsWithChildren<{}>) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
+export function getInitialSession() {
+  return new Promise((resolve) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'INITIAL_SESSION') {
+        subscription.unsubscribe()
+        resolve(session)
+      }
+    })
+  })
+}
+
 export function useAuthContext() {
   return useContext(AuthContext)
 }
@@ -82,28 +95,4 @@ export function useUserId() {
 
 export function useIsSignedIn() {
   return Boolean(useAuthContext().session)
-}
-
-export function withAuth<TProps extends object>(
-  Component: ComponentType<TProps>
-) {
-  function AuthWrapper(props: TProps) {
-    const { push } = useRouter()
-    const { isLoading, session } = useAuthContext()
-    const isSignedIn = Boolean(session)
-
-    useEffect(() => {
-      if (!isLoading && !isSignedIn) {
-        push('/sign-in')
-      }
-    }, [isLoading, isSignedIn, push])
-
-    return <Component {...props} />
-  }
-
-  AuthWrapper.displayName = `withAuth(${
-    Component.displayName ?? Component.name
-  })`
-
-  return AuthWrapper
 }

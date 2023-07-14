@@ -1,8 +1,9 @@
-import { withAuth } from '~/lib/auth'
+import { withAuth } from '~/lib/hocs/with-auth'
+import { withPurchased } from '~/lib/hocs/with-purchased'
 import { NextPageWithLayout } from '~/lib/types'
 
 const IndexPage: NextPageWithLayout = () => {
-  return <div>need auth</div>
+  return <div>Authenticated &amp; Purchased</div>
 }
 
-export default withAuth(IndexPage)
+export default withAuth(withPurchased(IndexPage))

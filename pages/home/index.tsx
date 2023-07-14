@@ -137,20 +137,6 @@ export default function Home() {
               })}
         </div>
       </main>
-
-      <footer className="flex items-center justify-center w-full h-24 border-t">
-        <a
-          className="flex items-center justify-center"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Powered by{' '}
-          <div className="flex ml-2">
-            <Image src="/vercel.svg" alt="Vercel Logo" width={71} height={16} />
-          </div>
-        </a>
-      </footer>
     </div>
   )
 }
