@@ -115,8 +115,8 @@ export default function Home() {
               <path d="M12 16h.01" stroke="#f44336" />
             </svg>
             <p>
-              Cannot add <b>{error.domain}</b> since it&apos;s already assigned
-              to another project.
+              Cannot add <b>{(error as any).domain}</b> since it&apos;s already
+              assigned to another project.
             </p>
           </div>
         )}

@@ -4,7 +4,6 @@ import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import DomainsBackground from '~/components/domains-background'
-import InfiniteDomainScroller from '~/components/infinite-domain-scroller'
 import { Button } from '~/components/ui/button'
 import {
   Form,
@@ -37,7 +36,7 @@ export const getStaticProps: GetStaticProps<{ domain: string }> = async ({
   params,
 }) => {
   return {
-    props: { domain: params.domain as string },
+    props: { domain: params?.domain as string },
   }
 }
 

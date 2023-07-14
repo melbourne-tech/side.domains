@@ -9,6 +9,7 @@ if (!supabaseUrl || !supabaseServiceKey) {
 }
 
 const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey, {
+  global: { fetch },
   auth: {
     persistSession: typeof window !== 'undefined',
   },
