@@ -6,6 +6,7 @@ import { Button } from '~/components/ui/button'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -13,37 +14,45 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { useToast } from '~/components/ui/use-toast'
-import supabase from '~/lib/supabase'
+import { useDomainAddMutation } from '~/lib/data/domain-name-add-mutation'
+import { ValidationError } from '~/lib/errors'
 
 const formSchema = z.object({
-  email: z.string().min(1, 'Email must not be empty').email('Invalid email'),
+  domainName: z.string().min(1, 'Domain must not be empty'),
 })
 
-const SignInPage = () => {
+const AddDomain = () => {
   const { toast } = useToast()
+  const { mutateAsync } = useDomainAddMutation()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
+      domainName: '',
     },
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { error } = await supabase.auth.signInWithOtp({
-      email: values.email,
-    })
+    try {
+      await mutateAsync(values)
 
-    if (error) {
       toast({
-        title: 'Uh oh! Something went wrong.',
+        title: 'Domain added',
+        description:
+          'Your domain has been added. Please add the required records.',
+      })
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        Object.entries(error.errors.fieldErrors).forEach(([key, value]) => {
+          form.setError(key as any, { message: value?.[0] as any })
+        })
+        return
+      }
+
+      toast({
+        title: 'Something went wrong',
         description: error.message,
         variant: 'destructive',
-      })
-    } else {
-      toast({
-        title: 'Sign in email sent!',
-        description: 'Please check your email for a sign in link.',
       })
     }
   }
@@ -51,24 +60,28 @@ const SignInPage = () => {
   useEffect(() => {
     if (form.formState.isSubmitSuccessful) {
       form.reset({
-        email: '',
+        domainName: '',
       })
     }
   }, [form.formState.isSubmitSuccessful, form.reset])
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex items-end gap-4 shadow-lg p-4 rounded-lg"
+      >
         <FormField
           control={form.control}
-          name="email"
+          name="domainName"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
+            <FormItem className="flex-1">
+              <FormLabel>Apex Domain Name</FormLabel>
               <FormControl>
-                <Input placeholder="you@yourdomain.com" {...field} />
+                <Input placeholder="yourdomain.com" {...field} />
               </FormControl>
               <FormMessage />
+              <FormDescription>Do not include www.</FormDescription>
             </FormItem>
           )}
         />
@@ -78,11 +91,11 @@ const SignInPage = () => {
           isLoading={form.formState.isSubmitting}
           disabled={form.formState.isSubmitting}
         >
-          Sign In / Sign Up
+          Add Domain
         </Button>
       </form>
     </Form>
   )
 }
 
-export default SignInPage
+export default AddDomain

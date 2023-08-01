@@ -5,7 +5,7 @@ description: Learn to leverage Vercel's Domains API to add and remove domains pr
 framework: Next.js
 useCase: Documentation
 css: Tailwind
-deployUrl: https://vercel.com/new/clone?repository-url=https://github.com/vercel/examples/tree/main/solutions/domains-api&project-name=domains-api&repository-name=domains-api&env=AUTH_BEARER_TOKEN,PROJECT_ID_VERCEL,TEAM_ID_VERCEL
+deployUrl: https://vercel.com/new/clone?repository-url=https://github.com/vercel/examples/tree/main/solutions/domains-api&project-name=domains-api&repository-name=domains-api&env=VERCEL_AUTH_BEARER_TOKEN,VERCEL_PROJECT_ID,VERCEL_TEAM_ID
 demoUrl: https://domains-api.vercel.app
 relatedTemplates:
   - platforms-starter-kit
@@ -32,9 +32,9 @@ https://domains-api.vercel.app/
 
 You'll need to configure 3 different environment variables for this project to work:
 
-- `PROJECT_ID_VERCEL`: The ID of the Vercel project you want to add/remove domains from. You can find it under the "Settings" tab in your project's dashboard.
-- `TEAM_ID_VERCEL`: The ID of the Vercel team you want to add/remove domains from. You can find it under the "Settings" tab in your team's dashboard.
-- `AUTH_BEARER_TOKEN`: Your personal auth bearer token that gives you programmatic access to your Vercel account. You can create one under the "Tokens" tab in your personal account's settings tab.
+- `VERCEL_PROJECT_ID`: The ID of the Vercel project you want to add/remove domains from. You can find it under the "Settings" tab in your project's dashboard.
+- `VERCEL_TEAM_ID`: The ID of the Vercel team you want to add/remove domains from. You can find it under the "Settings" tab in your team's dashboard.
+- `VERCEL_AUTH_BEARER_TOKEN`: Your personal auth bearer token that gives you programmatic access to your Vercel account. You can create one under the "Tokens" tab in your personal account's settings tab.
 
 ### 1. Adding Domains
 
@@ -77,7 +77,7 @@ You can choose from one of the following two methods to use this repository:
 
 Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=platforms-eap):
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/examples/tree/main/solutions/domains-api&project-name=domains-api&repository-name=domains-api&env=AUTH_BEARER_TOKEN,PROJECT_ID_VERCEL,TEAM_ID_VERCEL)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/examples/tree/main/solutions/domains-api&project-name=domains-api&repository-name=domains-api&env=VERCEL_AUTH_BEARER_TOKEN,VERCEL_PROJECT_ID,VERCEL_TEAM_ID)
 
 ### Clone and Deploy
 

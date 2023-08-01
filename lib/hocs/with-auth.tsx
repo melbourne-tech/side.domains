@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router'
 import { ComponentType, useEffect } from 'react'
 import { useAuthContext } from '../contexts/auth'
+import { isNextPageWithLayout } from '../types'
 
 export function withAuth<TProps extends object>(
   Component: ComponentType<TProps>
@@ -22,6 +23,10 @@ export function withAuth<TProps extends object>(
   AuthWrapper.displayName = `withAuth(${
     Component.displayName ?? Component.name
   })`
+
+  if (isNextPageWithLayout(Component)) {
+    AuthWrapper.getLayout = Component.getLayout
+  }
 
   return AuthWrapper
 }

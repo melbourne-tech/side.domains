@@ -100,39 +100,3 @@ export async function POST(request: NextRequest) {
     status: 200,
   })
 }
-
-// // Lemon Squeezy requires the raw body to construct the event.
-// export const config = {
-//   api: {
-//     bodyParser: false,
-//   },
-// }
-
-// const hmac = crypto.createHmac(
-//   'sha256',
-//   process.env.LEMON_SQUEEZY_WEBHOOK_SIGNING_SECRET
-// )
-
-// export default function handler(req: NextApiRequest, res: NextApiResponse) {
-//   if (req.method !== 'POST') {
-//     return res.status(405).json({ message: 'Method not allowed' })
-//   }
-
-//   console.log('body:', req.body)
-
-//   const signatureHeader =
-//     (Array.isArray(req.headers['X-Signature'])
-//       ? req.headers['X-Signature'][0]
-//       : req.headers['X-Signature']) ?? ''
-
-//   const digest = Buffer.from(hmac.update(req.body).digest('hex'), 'utf8')
-//   const signature = Buffer.from(signatureHeader, 'utf8')
-
-//   if (!crypto.timingSafeEqual(digest, signature)) {
-//     return res.status(401).json({ message: 'Invalid signature' })
-//   }
-
-//   console.log('req.body', req.body)
-
-//   res.status(200).json({ message: 'Hello from Next.js!' })
-// }

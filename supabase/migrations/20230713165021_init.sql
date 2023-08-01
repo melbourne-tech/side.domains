@@ -49,10 +49,8 @@ create table
     "created_at" timestamp with time zone not null default now(),
     "updated_at" timestamp with time zone not null default now(),
     "user_id" uuid not null references auth.users (id) on update cascade on delete cascade,
-    "domain_name" citext not null
+    "domain_name" citext not null unique
   );
-
-create unique index on public.domain_names (user_id, domain_name);
 
 alter table public.domain_names enable row level security;
 

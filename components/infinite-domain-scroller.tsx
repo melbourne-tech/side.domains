@@ -21,7 +21,7 @@ const InfiniteDomainScroller = ({
 
   return (
     <div
-      className="relative w-[200vw] flex items-center overflow-hidden rotate-[-45deg] bg-slate-100 text-gray-700 text-2xl font-medium select-none shadow-lg"
+      className="relative max-width-viewport flex items-center overflow-hidden rotate-[-45deg] bg-slate-100 text-gray-700 text-2xl font-medium select-none shadow-lg"
       style={{
         height: HEIGHT,
         top: index * HEIGHT * 0.35,

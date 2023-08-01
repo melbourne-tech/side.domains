@@ -77,8 +77,6 @@
   }
 }
 
-html,
-body,
-#__next {
-  height: 100%;
+.max-width-viewport {
+  width: max(200vw, 200vh);
 }

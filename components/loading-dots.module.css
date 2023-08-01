@@ -12,10 +12,10 @@
   animation-duration: 1.4s;
   animation-iteration-count: infinite;
   animation-fill-mode: both;
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background-color: #000;
+  background-color: currentColor;
   display: inline-block;
   margin: 0 1px;
 }

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import ConfiguredSectionPlaceholder from './configured-section-placeholder'
 
 function getVerificationError(verificationResponse) {
@@ -13,11 +12,16 @@ function getVerificationError(verificationResponse) {
   }
 }
 
-const ConfiguredSection = ({ domainInfo }) => {
-  const [recordType, setRecordType] = useState('CNAME')
+export type ConfiguredSectionProps = {
+  domainInfo?: any
+}
+
+const ConfiguredSection = ({ domainInfo }: ConfiguredSectionProps) => {
   if (!domainInfo) {
     return <ConfiguredSectionPlaceholder />
   }
+
+  const recordType = domainInfo.name.startsWith('www.') ? 'CNAME' : 'A'
 
   if (!domainInfo.verified) {
     const txtVerification = domainInfo.verification.find(
@@ -49,12 +53,7 @@ const ConfiguredSection = ({ domainInfo }) => {
         <div className="px-2 sm:px-10">
           <div className="flex justify-start space-x-4">
             <div
-              onClick={() => setRecordType('CNAME')}
-              className={`${
-                recordType == 'CNAME'
-                  ? 'text-black border-black'
-                  : 'text-gray-400 border-white'
-              } text-sm border-b-2 pb-1 transition-all ease duration-150`}
+              className={`text-sm border-b-2 pb-1 transition-all ease duration-150`}
             >
               Verify Domain Ownership
             </div>
@@ -148,26 +147,11 @@ const ConfiguredSection = ({ domainInfo }) => {
 
           <div className="px-2 sm:px-10">
             <div className="flex justify-start space-x-4">
-              <button
-                onClick={() => setRecordType('CNAME')}
-                className={`${
-                  recordType == 'CNAME'
-                    ? 'text-black border-black'
-                    : 'text-gray-400 border-white'
-                } text-sm border-b-2 pb-1 transition-all ease duration-150`}
-              >
-                CNAME Record (subdomains)
-              </button>
-              <button
-                onClick={() => setRecordType('A')}
-                className={`${
-                  recordType == 'A'
-                    ? 'text-black border-black'
-                    : 'text-gray-400 border-white'
-                } text-sm border-b-2 pb-1 transition-all ease duration-150`}
-              >
-                A Record (apex domain)
-              </button>
+              <div className="text-sm border-b-2 pb-1 transition-all ease duration-150">
+                {recordType === 'CNAME'
+                  ? 'CNAME Record (subdomains)'
+                  : 'A Record (apex domain)'}
+              </div>
             </div>
             <div className="my-3 text-left">
               <p className="my-5 text-sm">
@@ -188,7 +172,7 @@ const ConfiguredSection = ({ domainInfo }) => {
                   <p className="text-sm font-bold">Value</p>
                   <p className="text-sm font-mono mt-2">
                     {recordType == 'CNAME'
-                      ? `cname.platformize.co`
+                      ? `cname.side.domains`
                       : `76.76.21.21`}
                   </p>
                 </div>

@@ -9,6 +9,7 @@ import {
   useState,
 } from 'react'
 import supabase from '../supabase'
+import { useQueryClient } from '@tanstack/react-query'
 
 export type AuthContextValue = {
   session: Session | null
