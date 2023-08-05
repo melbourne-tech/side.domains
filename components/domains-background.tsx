@@ -21,7 +21,7 @@ const DomainsBackground = ({ domainName }: DomainsBackgroundProps) => {
   )
 
   return (
-    <div className="h-screen w-screen overflow-hidden fixed inset-0 bg-slate-300">
+    <div className="h-screen w-screen overflow-hidden absolute inset-0 bg-slate-300 -z-10">
       {elements}
     </div>
   )

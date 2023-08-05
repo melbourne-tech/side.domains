@@ -1,7 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { SendIcon } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
+
 import { Button } from '~/components/ui/button'
 import {
   Form,
@@ -127,7 +129,7 @@ const SellForm = ({ domainName }: SellFormProps) => {
           isLoading={form.formState.isSubmitting}
           disabled={form.formState.isSubmitting}
         >
-          Submit
+          Send Offer <SendIcon size={16} />
         </Button>
       </form>
     </Form>

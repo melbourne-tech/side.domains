@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
+import AppLayout from '~/components/layouts/AppLayout'
 import { Button } from '~/components/ui/button'
 import {
   Form,
@@ -14,12 +15,13 @@ import {
 import { Input } from '~/components/ui/input'
 import { useToast } from '~/components/ui/use-toast'
 import supabase from '~/lib/supabase'
+import { NextPageWithLayout } from '~/lib/types'
 
 const formSchema = z.object({
   email: z.string().min(1, 'Email must not be empty').email('Invalid email'),
 })
 
-const SignInPage = () => {
+const SignInPage: NextPageWithLayout = () => {
   const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,7 +60,10 @@ const SignInPage = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col gap-8"
+      >
         <FormField
           control={form.control}
           name="email"
@@ -77,6 +82,7 @@ const SignInPage = () => {
           type="submit"
           isLoading={form.formState.isSubmitting}
           disabled={form.formState.isSubmitting}
+          className="self-end"
         >
           Sign In / Sign Up
         </Button>
@@ -84,5 +90,11 @@ const SignInPage = () => {
     </Form>
   )
 }
+
+SignInPage.getLayout = (page) => (
+  <AppLayout title="Sign In" showSignOut={false}>
+    {page}
+  </AppLayout>
+)
 
 export default SignInPage

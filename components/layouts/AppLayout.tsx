@@ -4,9 +4,14 @@ import { Button } from '../ui/button'
 
 export type AppLayoutProps = {
   title: string
+  showSignOut?: boolean
 }
 
-const AppLayout = ({ title, children }: PropsWithChildren<AppLayoutProps>) => {
+const AppLayout = ({
+  title,
+  children,
+  showSignOut = true,
+}: PropsWithChildren<AppLayoutProps>) => {
   const { mutate: signOut, isLoading } = useSignOutMutation()
 
   return (
@@ -15,14 +20,16 @@ const AppLayout = ({ title, children }: PropsWithChildren<AppLayoutProps>) => {
         <div className="flex h-16 justify-between items-center px-4">
           <h1 className="font-medium">side.domains</h1>
 
-          <Button
-            variant="ghost"
-            onClick={() => signOut()}
-            isLoading={isLoading}
-            disabled={isLoading}
-          >
-            Sign Out
-          </Button>
+          {showSignOut && (
+            <Button
+              variant="ghost"
+              onClick={() => signOut()}
+              isLoading={isLoading}
+              disabled={isLoading}
+            >
+              Sign Out
+            </Button>
+          )}
         </div>
       </div>
 

@@ -1,13 +1,8 @@
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
-import { z } from 'zod'
 import DomainsBackground from '~/components/domains-background'
 import SellForm from '~/components/sell/SellForm'
 import supabaseAdmin from '~/lib/supabase-admin'
-
-const formSchema = z.object({
-  email: z.string().email(),
-  offer: z.coerce.number().min(0).or(z.literal('')),
-})
+import { NextPageWithLayout } from '~/lib/types'
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const { data, error } = await supabaseAdmin
@@ -31,14 +26,20 @@ export const getStaticProps: GetStaticProps<{ domain: string }> = async ({
   }
 }
 
-const ForSalePage = ({
+interface ForSalePageProps
+  extends InferGetStaticPropsType<typeof getStaticProps> {
+  showPoweredBy?: boolean
+}
+
+const ForSalePage: NextPageWithLayout<ForSalePageProps> = ({
   domain: domainName,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+  showPoweredBy = true,
+}) => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <>
       <DomainsBackground domainName={domainName} />
 
-      <div className="bg-white shadow-lg rounded-lg p-4 space-y-6 z-10">
+      <div className="bg-white shadow-lg rounded-lg p-4 space-y-6">
         <h1 className="text-4xl font-semibold leading-none tracking-tight">
           {domainName} may be for sale
         </h1>
@@ -48,18 +49,26 @@ const ForSalePage = ({
         <SellForm domainName={domainName} />
       </div>
 
-      <a
-        className="fixed bg-white shadow-lg bottom-0 left-8 py-1.5 px-3 rounded-t-lg font-medium group"
-        href={`https://side.domains?utm_source=${domainName}&utm_medium=for-sale-page&utm_campaign=for-sale-page`}
-        target="_blank"
-      >
-        ⚡️ Powered by{' '}
-        <span className="text-blue-600 group-hover:underline group-hover:text-blue-700 transition-colors">
-          side.domains
-        </span>
-      </a>
-    </div>
+      {showPoweredBy && (
+        <a
+          className="fixed bg-white shadow-lg bottom-0 left-8 py-1.5 px-3 rounded-t-lg font-medium group"
+          href={`https://side.domains?utm_source=${domainName}&utm_medium=for-sale-page&utm_campaign=for-sale-page`}
+          target="_blank"
+        >
+          ⚡️ Powered by{' '}
+          <span className="text-blue-600 group-hover:underline group-hover:text-blue-700 transition-colors">
+            side.domains
+          </span>
+        </a>
+      )}
+    </>
   )
 }
+
+ForSalePage.getLayout = (page) => (
+  <div className="flex flex-col items-center justify-center min-h-screen relative">
+    {page}
+  </div>
+)
 
 export default ForSalePage
