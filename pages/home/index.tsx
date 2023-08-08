@@ -10,7 +10,11 @@ const HomePage = () => {
   return (
     <>
       <Head>
-        <title>side.domains</title>
+        <title>side.domains — Sales pages for your side project domains</title>
+        <meta
+          name="description"
+          content="Receive offers on your side project domains with simple sales pages. No commissions, no subscriptions. Secured with SSL/TLS."
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
