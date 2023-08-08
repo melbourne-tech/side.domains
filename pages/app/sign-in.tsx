@@ -7,6 +7,7 @@ import { Button } from '~/components/ui/button'
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -73,6 +74,9 @@ const SignInPage: NextPageWithLayout = () => {
               <FormControl>
                 <Input placeholder="you@yourdomain.com" {...field} />
               </FormControl>
+              <FormDescription>
+                Use the same email you used at checkout.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

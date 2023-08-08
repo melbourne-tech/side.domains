@@ -11,11 +11,12 @@ const tiers = [
     description: 'Run your own side.domains for free!',
     features: ['Self-Hosted', 'Same Great Features'],
     featured: false,
+    ctaText: 'View the Code',
   },
   {
     name: 'Lifetime Unlimited',
     id: 'lifetime-unlimited',
-    href: 'https://app.side.domains/sign-in',
+    href: `${process.env.NEXT_PUBLIC_LEMON_SQUEEZY_STORE_URL}/checkout/buy/${process.env.NEXT_PUBLIC_LEMON_SQUEEZY_VARIANT_ID}`,
     price: '$50',
     description: 'Everything you need to get offers on your domains.',
     features: [
@@ -26,6 +27,7 @@ const tiers = [
       'Remove side.domains Branding',
     ],
     featured: true,
+    ctaText: 'Buy Now',
   },
 ]
 
@@ -136,7 +138,7 @@ const Pricing = () => {
               className="w-full mt-8"
             >
               <a href={tier.href} aria-describedby={tier.id}>
-                Get started now <ArrowRightIcon size={16} />
+                {tier.ctaText} <ArrowRightIcon size={16} />
               </a>
             </Button>
           </div>
