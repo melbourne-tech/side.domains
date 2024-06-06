@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import * as z from 'zod'
 import supabaseAdmin, { getUserFromRequest } from '~/lib/supabase-admin'
+import { ParseResultType, parseDomain } from 'parse-domain'
 
 const schema = z.object({
   domainName: z.string().min(1, 'Domain must not be empty'),
@@ -40,7 +41,28 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { domainName } = result.data
+  const { domainName: rawDomainName } = result.data
+
+  let domainName: string | undefined = undefined
+
+  const parseResult = parseDomain(rawDomainName)
+  if (parseResult.type === ParseResultType.Listed) {
+    const { domain, topLevelDomains } = parseResult
+    domainName = `${domain}.${topLevelDomains.join('.')}`
+  }
+  if (domainName === undefined) {
+    return new Response(
+      JSON.stringify({
+        code: 'INVALID_DOMAIN',
+      }),
+      {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+  }
 
   await supabaseAdmin.from('domain_names').insert([
     {
@@ -53,6 +75,7 @@ export async function POST(request: NextRequest) {
     },
   ])
 
+  // We have to add the domains in order because of the redirect on the second domain
   const apexResponse = await fetch(
     `https://api.vercel.com/v10/projects/${process.env.VERCEL_PROJECT_ID}/domains?teamId=${process.env.VERCEL_TEAM_ID}`,
     {

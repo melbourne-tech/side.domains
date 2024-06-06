@@ -1,11 +1,14 @@
-import ConfiguredSection from './configured-section'
-import useSWR, { mutate } from 'swr'
-import fetcher from '../lib/fetcher'
+import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import LoadingDots from '../components/loading-dots'
+import useSWR, { mutate } from 'swr'
+import supabase from '~/lib/supabase'
+import fetcher from '../lib/fetcher'
+import ConfiguredSection from './configured-section'
 import { Button } from './ui/button'
 
 const DomainCard = ({ domain }) => {
+  const queryClient = useQueryClient()
+
   const { data: domainInfo, isValidating } = useSWR(
     `/api/check-domain?domain=${domain}`,
     fetcher,
@@ -57,8 +60,16 @@ const DomainCard = ({ domain }) => {
             onClick={async () => {
               setRemoving(true)
               try {
-                await fetch(`/api/remove-domain?domain=${domain}`)
-                // await revalidateDomains()
+                const token = (await supabase.auth.getSession()).data.session
+                  ?.access_token
+
+                await fetch(`/api/remove-domain?domain=${domain}`, {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                })
+
+                await queryClient.invalidateQueries(['domain-names'])
               } catch (error) {
                 alert(`Error removing domain`)
               } finally {
