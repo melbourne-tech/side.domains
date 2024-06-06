@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { NextApiRequest } from 'next'
 import { NextRequest } from 'next/server'
 import { Database } from './database.types'
 
@@ -18,8 +19,16 @@ const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey, {
 
 export default supabaseAdmin
 
-export async function getUserFromRequest(request: NextRequest) {
-  const token = request.headers.get('Authorization')?.replace('Bearer ', '')
+export async function getUserFromRequest(
+  request: NextRequest | NextApiRequest
+) {
+  let token: string | undefined
+
+  if (typeof request.headers.get === 'function') {
+    token = request.headers.get('Authorization')?.replace('Bearer ', '')
+  } else {
+    token = request.headers['authorization']?.replace('Bearer ', '')
+  }
   if (!token) return null
 
   const {
