@@ -14,9 +14,13 @@ function getVerificationError(verificationResponse) {
 
 export type ConfiguredSectionProps = {
   domainInfo?: any
+  wwwDomainInfo?: any
 }
 
-const ConfiguredSection = ({ domainInfo }: ConfiguredSectionProps) => {
+const ConfiguredSection = ({
+  domainInfo,
+  wwwDomainInfo,
+}: ConfiguredSectionProps) => {
   if (!domainInfo) {
     return <ConfiguredSectionPlaceholder />
   }

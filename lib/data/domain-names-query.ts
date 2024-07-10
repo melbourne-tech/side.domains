@@ -19,6 +19,8 @@ export async function getDomainNames(signal?: AbortSignal) {
   return data
 }
 
+export type DomainName = Awaited<ReturnType<typeof getDomainNames>>[number]
+
 export function useDomainNamesQuery() {
   const isFinishedLoading = useIsInitialLoadFinished()
 
