@@ -25,12 +25,11 @@ const ConfiguredSection = ({
     return <ConfiguredSectionPlaceholder />
   }
 
-  const recordType = domainInfo.name.startsWith('www.') ? 'CNAME' : 'A'
-
   if (!domainInfo.verified) {
     const txtVerification = domainInfo.verification.find(
       (x) => x.type === 'TXT'
     )
+
     return (
       <>
         <div className="flex items-center space-x-3 my-3 px-2 sm:px-10">
@@ -117,9 +116,13 @@ const ConfiguredSection = ({
             cx="12"
             cy="12"
             r="10"
-            fill={domainInfo.configured ? '#1976d2' : '#d32f2f'}
+            fill={
+              domainInfo?.configured && wwwDomainInfo?.configured
+                ? '#1976d2'
+                : '#d32f2f'
+            }
           />
-          {domainInfo.configured ? (
+          {domainInfo?.configured && wwwDomainInfo?.configured ? (
             <>
               <path
                 d="M8 11.8571L10.5 14.3572L15.8572 9"
@@ -141,20 +144,21 @@ const ConfiguredSection = ({
               : 'text-red-700 font-medium'
           } text-sm`}
         >
-          {domainInfo.configured ? 'Valid' : 'Invalid'} Configuration
+          {domainInfo?.configured && wwwDomainInfo?.configured
+            ? 'Valid'
+            : 'Invalid'}{' '}
+          Configuration
         </p>
       </div>
 
-      {!domainInfo.configured && (
+      {(!domainInfo?.configured || !wwwDomainInfo?.configured) && (
         <>
           <div className="w-full border-t border-gray-100 mt-5 mb-8" />
 
           <div className="px-2 sm:px-10">
             <div className="flex justify-start space-x-4">
               <div className="text-sm border-b-2 pb-1 transition-all ease duration-150">
-                {recordType === 'CNAME'
-                  ? 'CNAME Record (subdomains)'
-                  : 'A Record (apex domain)'}
+                Records
               </div>
             </div>
             <div className="my-3 text-left">
@@ -164,20 +168,35 @@ const ConfiguredSection = ({
               <div className="flex justify-start items-center space-x-10 bg-gray-50 p-2 rounded-md">
                 <div>
                   <p className="text-sm font-bold">Type</p>
-                  <p className="text-sm font-mono mt-2">{recordType}</p>
+                  {!domainInfo?.configured && (
+                    <p className="text-sm font-mono mt-2">A</p>
+                  )}
+                  {!wwwDomainInfo?.configured && (
+                    <p className="text-sm font-mono mt-2">CNAME</p>
+                  )}
                 </div>
                 <div>
                   <p className="text-sm font-bold">Name</p>
                   <p className="text-sm font-mono mt-2">
-                    {recordType == 'CNAME' ? 'www' : '@'}
+                    {!domainInfo?.configured && (
+                      <p className="text-sm font-mono mt-2">@</p>
+                    )}
+                    {!wwwDomainInfo?.configured && (
+                      <p className="text-sm font-mono mt-2">www</p>
+                    )}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm font-bold">Value</p>
                   <p className="text-sm font-mono mt-2">
-                    {recordType == 'CNAME'
-                      ? `cname.side.domains`
-                      : `76.76.21.21`}
+                    {!domainInfo?.configured && (
+                      <p className="text-sm font-mono mt-2">76.76.21.21</p>
+                    )}
+                    {!wwwDomainInfo?.configured && (
+                      <p className="text-sm font-mono mt-2">
+                        cname.side.domains
+                      </p>
+                    )}
                   </p>
                 </div>
               </div>

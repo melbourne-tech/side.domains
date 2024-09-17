@@ -6,7 +6,7 @@ import fetcher from '../lib/fetcher'
 import ConfiguredSection from './configured-section'
 import { Button } from './ui/button'
 
-const DomainCard = ({ domain, wwwDomain }) => {
+const DomainCard = ({ domain }) => {
   const queryClient = useQueryClient()
 
   const { data: domainInfo, isValidating } = useSWR(
@@ -15,7 +15,7 @@ const DomainCard = ({ domain, wwwDomain }) => {
     { revalidateOnMount: true, refreshInterval: 5000 }
   )
   const { data: wwwDomainInfo, isValidating: isValidatingWWW } = useSWR(
-    `/api/check-domain?domain=${wwwDomain}`,
+    `/api/check-domain?domain=www.${domain}`,
     fetcher,
     { revalidateOnMount: true, refreshInterval: 5000 }
   )

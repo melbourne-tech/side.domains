@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { z } from 'zod'
 import { ParseResultType, parseDomain } from 'parse-domain'
+import { z } from 'zod'
 import supabaseAdmin, { getUserFromRequest } from '~/lib/supabase-admin'
 
 const schema = z.object({
@@ -47,13 +47,10 @@ export default async function handler(
     })
   }
 
-  const wwwDomain = `www.${domainName}`
-  const domains = [domainName, wwwDomain]
-
-  const { error, count } = await supabaseAdmin
+  const { error } = await supabaseAdmin
     .from('domain_names')
-    .delete({ count: 'exact' })
-    .in('domain_name', domains)
+    .delete()
+    .eq('domain_name', domainName)
     .eq('user_id', user.id)
 
   if (error) {
@@ -63,27 +60,27 @@ export default async function handler(
     })
   }
 
-  if (count === domains.length) {
-    // We have to remove the domains in order because of the redirect on the first domain
-    await fetch(
-      `https://api.vercel.com/v9/projects/${process.env.VERCEL_PROJECT_ID}/domains/${wwwDomain}?teamId=${process.env.VERCEL_TEAM_ID}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.VERCEL_AUTH_BEARER_TOKEN}`,
-        },
-        method: 'DELETE',
-      }
-    )
-    await fetch(
-      `https://api.vercel.com/v9/projects/${process.env.VERCEL_PROJECT_ID}/domains/${domainName}?teamId=${process.env.VERCEL_TEAM_ID}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.VERCEL_AUTH_BEARER_TOKEN}`,
-        },
-        method: 'DELETE',
-      }
-    )
-  }
+  const wwwDomain = `www.${domainName}`
+
+  // We have to remove the domains in order because of the redirect on the first domain
+  await fetch(
+    `https://api.vercel.com/v9/projects/${process.env.VERCEL_PROJECT_ID}/domains/${wwwDomain}?teamId=${process.env.VERCEL_TEAM_ID}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.VERCEL_AUTH_BEARER_TOKEN}`,
+      },
+      method: 'DELETE',
+    }
+  )
+  await fetch(
+    `https://api.vercel.com/v9/projects/${process.env.VERCEL_PROJECT_ID}/domains/${domainName}?teamId=${process.env.VERCEL_TEAM_ID}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.VERCEL_AUTH_BEARER_TOKEN}`,
+      },
+      method: 'DELETE',
+    }
+  )
 
   res.status(200).send({ status: 'SUCCESS' })
 }
