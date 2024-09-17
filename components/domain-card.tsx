@@ -14,6 +14,12 @@ const DomainCard = ({ domain }) => {
     fetcher,
     { revalidateOnMount: true, refreshInterval: 5000 }
   )
+  const { data: wwwDomainInfo, isValidating: isValidatingWWW } = useSWR(
+    `/api/check-domain?domain=www.${domain}`,
+    fetcher,
+    { revalidateOnMount: true, refreshInterval: 5000 }
+  )
+
   const [removing, setRemoving] = useState(false)
 
   return (
@@ -85,7 +91,10 @@ const DomainCard = ({ domain }) => {
         </div>
       </div>
 
-      <ConfiguredSection domainInfo={domainInfo} />
+      <ConfiguredSection
+        domainInfo={domainInfo}
+        wwwDomainInfo={wwwDomainInfo}
+      />
     </div>
   )
 }
