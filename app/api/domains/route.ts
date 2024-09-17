@@ -64,16 +64,10 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  await supabaseAdmin.from('domain_names').insert([
-    {
-      domain_name: domainName,
-      user_id: user.id,
-    },
-    {
-      domain_name: `www.${domainName}`,
-      user_id: user.id,
-    },
-  ])
+  await supabaseAdmin.from('domain_names').insert({
+    domain_name: domainName,
+    user_id: user.id,
+  })
 
   // We have to add the domains in order because of the redirect on the second domain
   const apexResponse = await fetch(
