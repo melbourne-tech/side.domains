@@ -60,11 +60,9 @@ export default async function handler(
     })
   }
 
-  const wwwDomain = `www.${domainName}`
-
   // We have to remove the domains in order because of the redirect on the first domain
   await fetch(
-    `https://api.vercel.com/v9/projects/${process.env.VERCEL_PROJECT_ID}/domains/${wwwDomain}?teamId=${process.env.VERCEL_TEAM_ID}`,
+    `https://api.vercel.com/v9/projects/${process.env.VERCEL_PROJECT_ID}/domains/www.${domainName}?teamId=${process.env.VERCEL_TEAM_ID}`,
     {
       headers: {
         Authorization: `Bearer ${process.env.VERCEL_AUTH_BEARER_TOKEN}`,

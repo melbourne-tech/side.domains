@@ -19,7 +19,7 @@ const IndexPage: NextPageWithLayout = () => {
       <AddDomain />
 
       {isSuccess &&
-        domainNames?.map((domainName) => (
+        domainNames.map((domainName) => (
           <DomainCard key={domainName.id} domain={domainName.domain_name} />
         ))}
     </div>
