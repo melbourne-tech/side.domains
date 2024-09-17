@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "@supabase/supabase-js": "jsr:@supabase/supabase-js@^2.45.4",
+    "whoiser": "npm:whoiser@^1.18.0"
+  }
+}
