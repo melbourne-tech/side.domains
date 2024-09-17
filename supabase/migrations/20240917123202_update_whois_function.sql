@@ -7,7 +7,7 @@ grant usage on schema cron to postgres;
 grant all privileges on all tables in schema cron to postgres;
 
 create
-or replace function update_whois (domain_name_id uuid) returns void as $$
+or replace function public.update_whois (domain_name_id uuid) returns void as $$
 declare
   v_supabase_url text;
   v_supabase_service_role_key text;
@@ -30,6 +30,18 @@ begin
   );
 end;
 $$ language plpgsql;
+
+create
+or replace function public.update_whois_trigger () returns trigger as $$
+begin
+  perform update_whois(new.id);
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger update_whois_trigger
+after insert on public.domain_names for each row
+execute procedure public.update_whois_trigger ();
 
 select
   cron.schedule (
