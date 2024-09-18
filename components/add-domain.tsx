@@ -38,8 +38,7 @@ const AddDomain = () => {
 
       toast({
         title: 'Domain added',
-        description:
-          'Your domain has been added. Please add the required records.',
+        description: 'Your domain has been added.',
       })
     } catch (error) {
       if (error instanceof ValidationError) {

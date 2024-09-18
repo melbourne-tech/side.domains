@@ -41,12 +41,37 @@ Deno.serve(async (req) => {
     whoisData['Expiry'] ||
     whoisData['Expires']
 
+  const status = getDomainStatusFromText(whoisData['text'])
+
   await supabaseClient
     .from('domain_names')
-    .update({ whois_data: whoisData, expires_at: expiresAt })
+    .update({ whois_data: whoisData, expires_at: expiresAt, status })
     .eq('id', id)
 
   return new Response(JSON.stringify({ success: true }), {
     headers: { 'Content-Type': 'application/json' },
   })
 })
+
+function getDomainStatusFromText(text: unknown) {
+  const availableTexts = [
+    'no match',
+    'not found',
+    'no object found',
+    'available for registration',
+    'not registered',
+    'status: free',
+    'status: available',
+  ]
+
+  if (Array.isArray(text)) {
+    const search = text.join(' ').toLowerCase()
+    return availableTexts.some((availableText) =>
+      search.includes(availableText)
+    )
+      ? ('available' as const)
+      : ('registered' as const)
+  }
+
+  return 'unknown' as const
+}
