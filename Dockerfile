@@ -16,6 +16,9 @@ FROM base AS builder
 
 WORKDIR /app
 
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN --mount=type=secret,id=SUPABASE_SERVICE_KEY,env=SUPABASE_SERVICE_KEY \
