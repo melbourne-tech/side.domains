@@ -13,8 +13,8 @@ https:// {
 		on_demand
 	}
 
-	@www host_regexp ^www\.(.+)$
-	redir @www https://{re.1}{uri} permanent
+	@www header_regexp www Host ^www\.(.*)$
+	redir @www https://{re.www.1} 301
 
 	reverse_proxy side-domains:3000
 }
