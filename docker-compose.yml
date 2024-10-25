@@ -1,6 +1,6 @@
 services:
   side-domains:
-    image: ghcr.io/melbourne-tech/side.domains:latest
+    image: ghcr.io/melbourne-tech/side.domains:sha-bdad55c
     restart: unless-stopped
     environment:
       - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
