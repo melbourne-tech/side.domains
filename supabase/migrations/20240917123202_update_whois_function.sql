@@ -11,6 +11,7 @@ or replace function public.update_whois (domain_name_id uuid) returns void as $$
 declare
   v_supabase_url text;
   v_supabase_service_role_key text;
+  v_domain_name_id uuid;
 begin
   select decrypted_secret into v_supabase_url
   from vault.decrypted_secrets
@@ -20,16 +21,20 @@ begin
   from vault.decrypted_secrets
   where name = 'supabase-service-role-key';
 
+  select id into v_domain_name_id
+  from public.domain_names
+  where id = domain_name_id;
+
   perform net.http_post(
     url := concat(v_supabase_url, '/functions/v1/update-whois'),
     headers := jsonb_build_object(
       'Content-Type','application/json',
       'Authorization', concat('Bearer ', v_supabase_service_role_key)
     ),
-    body := concat('{"id": "', domain_name_id::text, '"}')::jsonb
+    body := concat('{"id": "', v_domain_name_id::text, '"}')::jsonb
   );
 end;
-$$ language plpgsql;
+$$ language plpgsql security invoker volatile;
 
 create
 or replace function public.update_whois_trigger () returns trigger as $$

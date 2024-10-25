@@ -1,7 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
-import { domain as lookupWhois } from 'whoiser'
-import { getObjectWithMostKeys } from '../_lib/utils.ts'
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') {
@@ -28,20 +26,20 @@ Deno.serve(async (req) => {
     return new Response(null, { status: 404 })
   }
 
-  const whoisData = getObjectWithMostKeys<{ [key: string]: unknown }>(
-    await lookupWhois(data.domain_name)
+  const whoisResponse = await fetch(
+    `https://whois.side.domains/${data.domain_name}`
   )
+  const whoisFullData = await whoisResponse.json()
+  const whoisData = whoisFullData?.data
 
-  const expiresAt =
-    whoisData['Expiry Date'] ||
-    whoisData['Expiration Date'] ||
-    whoisData['Registry Expiry Date'] ||
-    whoisData['Registrar Registration Expiration Date'] ||
-    whoisData['Registrar Expiration Date'] ||
-    whoisData['Expiry'] ||
-    whoisData['Expires']
+  const expiresAt = whoisData?.domain?.expiration_date ?? null
 
-  const status = getDomainStatusFromText(whoisData['text'])
+  const status =
+    whoisFullData?.success === true
+      ? 'registered'
+      : whoisResponse.status === 404
+      ? 'available'
+      : 'unknown'
 
   await supabaseClient
     .from('domain_names')
@@ -52,26 +50,3 @@ Deno.serve(async (req) => {
     headers: { 'Content-Type': 'application/json' },
   })
 })
-
-function getDomainStatusFromText(text: unknown) {
-  const availableTexts = [
-    'no match',
-    'not found',
-    'no object found',
-    'available for registration',
-    'not registered',
-    'status: free',
-    'status: available',
-  ]
-
-  if (Array.isArray(text)) {
-    const search = text.join(' ').toLowerCase()
-    return availableTexts.some((availableText) =>
-      search.includes(availableText)
-    )
-      ? ('available' as const)
-      : ('registered' as const)
-  }
-
-  return 'unknown' as const
-}

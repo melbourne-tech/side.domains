@@ -1,0 +1,32 @@
+services:
+  side-domains:
+    image: ghcr.io/melbourne-tech/side.domains:latest
+    restart: unless-stopped
+    environment:
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - NEXT_PUBLIC_ROOT_DOMAIN=${NEXT_PUBLIC_ROOT_DOMAIN}
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
+      start_period: 15s
+      start_interval: 2s
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - $PWD/Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+    external: true
+  caddy_config:

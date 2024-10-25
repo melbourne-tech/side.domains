@@ -1,5 +1,5 @@
 import Head from 'next/head'
-
+import Features from '~/components/home/features'
 import Footer from '~/components/home/footer'
 import Hero from '~/components/home/hero'
 import HomeNav from '~/components/home/nav'
@@ -30,6 +30,7 @@ const HomePage = () => {
 
       <HomeNav />
       <Hero />
+      <Features />
       <Pricing />
       <Support />
 
