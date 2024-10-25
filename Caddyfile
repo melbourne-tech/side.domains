@@ -1,4 +1,8 @@
 {
+	servers {
+		trusted_proxies cloudflare
+	}
+
 	on_demand_tls {
 		ask http://side-domains:3000/api/check-domain
 	}
@@ -8,6 +12,9 @@ https:// {
 	tls {
 		on_demand
 	}
+
+	@www host_regexp ^www\.(.+)$
+	redir @www https://{re.1}{uri} permanent
 
 	reverse_proxy side-domains:3000
 }
