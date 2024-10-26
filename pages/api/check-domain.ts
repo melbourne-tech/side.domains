@@ -7,9 +7,6 @@ export default async function handler(
 ) {
   let { domain } = req.query
 
-  console.log('req.headers:', req.headers)
-  console.log('domain:', domain)
-
   if (typeof domain !== 'string') {
     return res.status(400).send('Domain must be a string')
   }
@@ -21,10 +18,9 @@ export default async function handler(
   const { error } = await supabaseAdmin
     .from('domain_names')
     .select()
-    .eq('domain_name', domain)
+    .eq('domain_name', domain.toLowerCase())
     .single()
   if (error) {
-    console.log('error:', error)
     return res.status(404).send('Domain not found')
   }
 

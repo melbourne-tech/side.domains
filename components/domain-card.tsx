@@ -1,101 +1,209 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
-import useSWR, { mutate } from 'swr'
-import supabase from '~/lib/supabase'
-import fetcher from '../lib/fetcher'
-import ConfiguredSection from './configured-section'
+import { format, formatDistance, isPast } from 'date-fns'
+import {
+  BadgeDollarSign,
+  Calendar,
+  Check,
+  CircleDot,
+  CircleHelp,
+  Globe,
+  Lock,
+  RefreshCw,
+  Settings2,
+} from 'lucide-react'
+import { Domain } from '~/lib/data/domain-names-query'
+import { useUpdateWhoisMutation } from '~/lib/data/update-whois-mutation'
+import { cn } from '~/lib/utils'
+import DomainForSale from './domain-for-sale'
+import DomainSettings from './domain-settings'
+import { Badge } from './ui/badge'
+import { BlurOverlay } from './ui/blur-overlay'
 import { Button } from './ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from './ui/sheet'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
+import DomainInfo from './WhoisInfo'
+import { useDomainUpdateMutation } from '~/lib/data/domain-name-update-mutation'
 
-const DomainCard = ({ domain }) => {
-  const queryClient = useQueryClient()
+interface DomainCardProps {
+  domain: Domain
+}
 
-  const { data: domainInfo, isValidating } = useSWR(
-    `/api/check-domain?domain=${domain}`,
-    fetcher,
-    { revalidateOnMount: true, refreshInterval: 5000 }
-  )
-  const { data: wwwDomainInfo, isValidating: isValidatingWWW } = useSWR(
-    `/api/check-domain?domain=www.${domain}`,
-    fetcher,
-    { revalidateOnMount: true, refreshInterval: 5000 }
-  )
+const getStatusDetails = (status: Domain['status']) => {
+  switch (status) {
+    case 'registered':
+      return {
+        color: 'bg-blue-500',
+        icon: Lock,
+      }
+    case 'available':
+      return {
+        color: 'bg-green-500',
+        icon: Check,
+      }
+    case 'unknown':
+    default:
+      return {
+        color: 'bg-gray-500',
+        icon: CircleHelp,
+      }
+  }
+}
 
-  const [removing, setRemoving] = useState(false)
+const DomainCard = ({ domain }: DomainCardProps) => {
+  const { mutate: updateDomain, isLoading: isUpdatingDomain } =
+    useDomainUpdateMutation()
+  const { mutate: updateWhois, isLoading: isUpdatingWhois } =
+    useUpdateWhoisMutation()
+
+  const expiryDate = domain.expires_at !== null && new Date(domain.expires_at)
+  const isExpired = expiryDate && isPast(expiryDate)
+  const statusDetails = getStatusDetails(domain.status)
+  const StatusIcon = statusDetails.icon
 
   return (
-    <div className="w-full mt-10 sm:shadow-md border-y sm:border border-black sm:border-gray-50 sm:rounded-lg py-10">
-      <div className="flex justify-between space-x-4 px-2 sm:px-10">
-        <a
-          href={`https://${domain}`}
-          target="_blank"
-          rel="noreferrer"
-          className="text-xl text-left font-semibold flex items-center"
-        >
-          {domain}
+    <Sheet>
+      <SheetTrigger>
+        <Card className="h-full">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4 text-gray-500" />
+              <CardTitle className="text-xl">{domain.domain_name}</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2">
+                <CircleDot className="w-4 h-4 text-gray-500" />
+                <span className="text-sm text-gray-500">Status:</span>
+              </div>
+              <Badge
+                className={cn(
+                  statusDetails.color,
+                  'text-white flex items-center gap-1.5'
+                )}
+              >
+                <StatusIcon className="w-3 h-3" />
+                {domain.status}
+              </Badge>
+            </div>
+            {expiryDate && (
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gray-500" />
+                <span className="text-sm text-gray-500">
+                  Expires: {format(expiryDate, 'MMM d, yyyy')}
+                  {isExpired && (
+                    <span className="ml-2 text-red-500 font-medium">
+                      (Expired)
+                    </span>
+                  )}
+                </span>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </SheetTrigger>
 
-          <span className="inline-block ml-2">
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              fill="none"
-              shapeRendering="geometricPrecision"
+      <SheetContent className="w-full max-w-3xl flex flex-col overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle>{domain.domain_name}</SheetTitle>
+        </SheetHeader>
+
+        <Tabs defaultValue="whois">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="whois" className="flex items-center gap-1">
+              <Globe className="h-4 w-4" />
+              <span>Whois</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="for_sale_page"
+              className="flex items-center gap-1"
             >
-              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-              <path d="M15 3h6v6" />
-              <path d="M10 14L21 3" />
-            </svg>
-          </span>
-        </a>
-        <div className="flex space-x-3">
-          <Button
-            onClick={() => {
-              mutate(`/api/check-domain?domain=${domain}`)
-            }}
-            isLoading={isValidating}
-            disabled={isValidating}
-            variant="secondary"
-          >
-            Refresh
-          </Button>
-          <Button
-            onClick={async () => {
-              setRemoving(true)
-              try {
-                const token = (await supabase.auth.getSession()).data.session
-                  ?.access_token
+              <BadgeDollarSign className="h-4 w-4" />
+              <span>For Sale Page</span>
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="flex items-center gap-1">
+              <Settings2 className="h-4 w-4" />
+              <span>Settings</span>
+            </TabsTrigger>
+          </TabsList>
 
-                await fetch(`/api/remove-domain?domain=${domain}`, {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                  },
-                })
+          <TabsContent value="whois" className="flex flex-col gap-2">
+            <div className="flex items-center justify-end gap-2 my-2">
+              {domain.whois_updated_at && (
+                <span className="text-sm font-medium">
+                  Last updated{' '}
+                  {formatDistance(
+                    new Date(domain.whois_updated_at),
+                    new Date(),
+                    {
+                      includeSeconds: true,
+                      addSuffix: true,
+                    }
+                  )}
+                </span>
+              )}
 
-                await queryClient.invalidateQueries(['domain-names'])
-              } catch (error) {
-                alert(`Error removing domain`)
-              } finally {
-                setRemoving(false)
-              }
-            }}
-            isLoading={removing}
-            disabled={removing}
-            variant="destructive"
-          >
-            Remove
-          </Button>
-        </div>
-      </div>
+              <Button
+                size="xs"
+                onClick={() => {
+                  updateWhois({ id: domain.id })
+                }}
+                isLoading={isUpdatingWhois}
+                disabled={isUpdatingWhois}
+              >
+                <RefreshCw className="h-3 w-3" />
+                Refresh Whois
+              </Button>
+            </div>
 
-      <ConfiguredSection
-        domainInfo={domainInfo}
-        wwwDomainInfo={wwwDomainInfo}
-      />
-    </div>
+            {domain.whois_data ? (
+              <DomainInfo data={domain.whois_data as unknown as any} />
+            ) : (
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <h3 className="text-sm font-semibold">Whois Information</h3>
+                </div>
+                <p className="text-sm">No whois information available</p>
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="for_sale_page">
+            <div className="bg-white rounded-lg border border-gray-200 p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <BadgeDollarSign className="w-4 h-4 text-gray-500" />
+                <h3 className="text-sm font-semibold">For Sale Page</h3>
+              </div>
+
+              <BlurOverlay
+                isBlurred={!domain.is_owned}
+                title="Domain must be owned to enable for sale page"
+                buttonText="Mark as Owned"
+                onClick={() => {
+                  updateDomain({
+                    id: domain.id,
+                    isOwned: true,
+                  })
+                }}
+                isLoading={isUpdatingDomain}
+              >
+                <DomainForSale domain={domain} />
+              </BlurOverlay>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <DomainSettings domain={domain} />
+          </TabsContent>
+        </Tabs>
+      </SheetContent>
+    </Sheet>
   )
 }
 

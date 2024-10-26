@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchAPI } from '../fetcher'
-import supabase from '../supabase'
 
 export interface DomainAddVariables {
   domainName: string
@@ -11,15 +10,9 @@ export function useDomainAddMutation() {
 
   return useMutation(
     async ({ domainName }: DomainAddVariables) => {
-      const { data, error } = await supabase.from('domain_names').insert({
-        domain_name: domainName,
+      await fetchAPI('/domains', 'POST', {
+        domainName,
       })
-
-      if (error) {
-        throw error
-      }
-
-      return data
     },
     {
       async onSuccess() {

@@ -1,6 +1,6 @@
 create extension pg_cron
 with
-  schema extensions;
+  schema pg_catalog;
 
 grant usage on schema cron to postgres;
 

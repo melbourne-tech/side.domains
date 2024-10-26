@@ -1,21 +1,6 @@
 import { NotFoundError, ValidationError } from './errors'
 import supabase from './supabase'
 
-const fetcher = async (...args) => {
-  // @ts-ignore
-  const res = await fetch(...args)
-  const json = await res.json()
-  if (res.status === 200) {
-    return json
-  } else {
-    const error: any = new Error(`${res.status}: ${json.error.message}`)
-    error.error = json.error
-    throw error
-  }
-}
-
-export default fetcher
-
 export async function fetchAPI<T>(
   path: string,
   method?: string,

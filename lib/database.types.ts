@@ -40,43 +40,41 @@ export type Database = {
           domain_name: string
           expires_at: string | null
           id: string
-          mode: Database["public"]["Enums"]["domain_name_mode"]
+          is_owned: boolean
           status: Database["public"]["Enums"]["domain_name_status"]
+          status_change_notifications_enabled: boolean
           updated_at: string
           user_id: string
           whois_data: Json | null
+          whois_updated_at: string | null
         }
         Insert: {
           created_at?: string
           domain_name: string
           expires_at?: string | null
           id?: string
-          mode?: Database["public"]["Enums"]["domain_name_mode"]
+          is_owned?: boolean
           status?: Database["public"]["Enums"]["domain_name_status"]
+          status_change_notifications_enabled?: boolean
           updated_at?: string
           user_id?: string
           whois_data?: Json | null
+          whois_updated_at?: string | null
         }
         Update: {
           created_at?: string
           domain_name?: string
           expires_at?: string | null
           id?: string
-          mode?: Database["public"]["Enums"]["domain_name_mode"]
+          is_owned?: boolean
           status?: Database["public"]["Enums"]["domain_name_status"]
+          status_change_notifications_enabled?: boolean
           updated_at?: string
           user_id?: string
           whois_data?: Json | null
+          whois_updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "domain_names_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       user_data: {
         Row: {
@@ -100,15 +98,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "user_data_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
@@ -129,7 +119,6 @@ export type Database = {
       }
     }
     Enums: {
-      domain_name_mode: "watching" | "owned_sales_page"
       domain_name_status: "unknown" | "registered" | "available"
     }
     CompositeTypes: {
@@ -533,5 +522,20 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 

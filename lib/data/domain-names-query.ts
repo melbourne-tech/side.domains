@@ -1,12 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { useIsInitialLoadFinished } from '../contexts/preloaded'
 import supabase from '../supabase'
+import { Database } from '../database.types'
+
+export type Domain = Database['public']['Tables']['domain_names']['Row']
 
 export async function getDomainNames(signal?: AbortSignal) {
   const query = supabase
     .from('domain_names')
     .select('*')
-    .order('updated_at', { ascending: false })
+    .order('created_at', { ascending: false })
   if (signal) {
     query.abortSignal(signal)
   }
@@ -27,6 +30,13 @@ export function useDomainNamesQuery() {
     async ({ signal }) => getDomainNames(signal),
     {
       enabled: isFinishedLoading,
+      refetchInterval(data) {
+        if (data?.some((d) => d.status === 'unknown')) {
+          return 5000
+        }
+
+        return false
+      },
     }
   )
 }
