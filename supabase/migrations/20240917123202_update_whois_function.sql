@@ -31,7 +31,9 @@ begin
       'Content-Type','application/json',
       'Authorization', concat('Bearer ', v_supabase_service_role_key)
     ),
-    body := concat('{"id": "', v_domain_name_id::text, '"}')::jsonb
+    body := jsonb_build_object(
+      'id', v_domain_name_id::text
+    )
   );
 end;
 $$ language plpgsql security invoker volatile;
