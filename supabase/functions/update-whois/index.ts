@@ -30,7 +30,8 @@ Deno.serve(async (req) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
   )
 
-  // Fetch the domain name with the user context
+  // Fetch the domain name with the user context,
+  // so users can only update their own domain names
   const { data } = await supabaseClient
     .from('domain_names')
     .select()
