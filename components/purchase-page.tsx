@@ -1,18 +1,30 @@
-import { useUser } from '~/lib/contexts/auth'
-import { Button } from './ui/button'
+import {
+  EmbeddedCheckout,
+  EmbeddedCheckoutProvider,
+} from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+import { useCallback, useMemo } from 'react'
+import { fetchAPI } from '~/lib/fetcher'
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+)
 
 const PurchasePage = () => {
-  const user = useUser()
+  const fetchClientSecret = useCallback(() => {
+    return fetchAPI<{ clientSecret: string }>('/billing/checkout', 'POST').then(
+      (data) => data.clientSecret
+    )
+  }, [])
 
   return (
-    <div>
-      <Button asChild>
-        <a
-          href={`${process.env.NEXT_PUBLIC_LEMON_SQUEEZY_STORE_URL}/checkout/buy/${process.env.NEXT_PUBLIC_LEMON_SQUEEZY_VARIANT_ID}?checkout[custom][user_id]=${user?.id}&checkout[email]=${user?.email}`}
-        >
-          Buy
-        </a>
-      </Button>
+    <div id="checkout">
+      <EmbeddedCheckoutProvider
+        stripe={stripePromise}
+        options={useMemo(() => ({ fetchClientSecret }), [fetchClientSecret])}
+      >
+        <EmbeddedCheckout />
+      </EmbeddedCheckoutProvider>
     </div>
   )
 }
