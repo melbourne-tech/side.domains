@@ -26,6 +26,7 @@ RUN --mount=type=secret,id=SUPABASE_SERVICE_KEY,env=SUPABASE_SERVICE_KEY \
   --mount=type=secret,id=NEXT_PUBLIC_SUPABASE_URL,env=NEXT_PUBLIC_SUPABASE_URL \
   --mount=type=secret,id=NEXT_PUBLIC_SUPABASE_ANON_KEY,env=NEXT_PUBLIC_SUPABASE_ANON_KEY \
   --mount=type=secret,id=NEXT_PUBLIC_ROOT_DOMAIN,env=NEXT_PUBLIC_ROOT_DOMAIN \
+  --mount=type=secret,id=NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,env=NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY \
   npm run build
 
 # --- Production ---
