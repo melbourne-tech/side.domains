@@ -99,7 +99,7 @@ Deno.serve(async (req) => {
       }),
       ui_mode: 'embedded',
       return_url: `${Deno.env.get(
-        'NEXT_PUBLIC_APP_URL'
+        'APP_URL'
       )}/return?session_id={CHECKOUT_SESSION_ID}`,
       metadata: {
         user_id: user.id,
