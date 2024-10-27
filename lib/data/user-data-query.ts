@@ -4,12 +4,14 @@ import { getQueryClient } from '../query-client'
 import supabase from '../supabase'
 
 export type UserData = {
-  hasPurchased: boolean
-  showBranding: boolean
+  isSubscribed: boolean
+  isLifetime: boolean
 }
 
 export async function getUserData(signal?: AbortSignal) {
-  const query = supabase.from('user_data').select('data')
+  const query = supabase
+    .from('user_data')
+    .select('user_id,is_subscribed,stripe_subscription_id')
   if (signal) {
     query.abortSignal(signal)
   }
@@ -20,8 +22,8 @@ export async function getUserData(signal?: AbortSignal) {
   }
 
   return {
-    hasPurchased: data.data?.['has_purchased'] ?? false,
-    showBranding: data.data?.['show_branding'] ?? true,
+    isSubscribed: data.is_subscribed,
+    isLifetime: data.stripe_subscription_id === null,
   } as UserData
 }
 

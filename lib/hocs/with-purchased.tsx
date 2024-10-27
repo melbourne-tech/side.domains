@@ -1,5 +1,5 @@
 import { ComponentType } from 'react'
-import PurchasePage from '~/components/purchase-page'
+import PurchasePlans from '~/components/purchase-plans'
 import { useUserDataQuery } from '../data/user-data-query'
 import { isNextPageWithLayout } from '../types'
 
@@ -9,8 +9,16 @@ export function withPurchased<TProps extends object>(
   function PurchasedWrapper(props: TProps) {
     const { data, isSuccess } = useUserDataQuery()
 
-    if (isSuccess && !data.hasPurchased) {
-      return <PurchasePage />
+    if (isSuccess && !data.isSubscribed) {
+      return (
+        <div className="flex flex-col mt-8">
+          <h2 className="text-3xl font-bold tracking-tight">
+            Subscribe to get started
+          </h2>
+
+          <PurchasePlans />
+        </div>
+      )
     }
 
     return <Component {...props} />

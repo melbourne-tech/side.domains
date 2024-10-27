@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
+import { ParseResultType, parseDomain } from 'parse-domain'
 import * as z from 'zod'
 import supabaseAdmin, { getUserFromRequest } from '~/lib/supabase-admin'
-import { ParseResultType, parseDomain } from 'parse-domain'
 
 const schema = z.object({
   domainName: z.string().min(1, 'Domain must not be empty'),
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
   const parseResult = parseDomain(rawDomainName)
   if (parseResult.type === ParseResultType.Listed) {
     const { domain, topLevelDomains } = parseResult
-    domainName = `${domain}.${topLevelDomains.join('.')}`
+    domainName = `${domain}.${topLevelDomains.join('.')}`.toLowerCase()
   }
   if (domainName === undefined) {
     return new Response(
@@ -64,60 +64,33 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  await supabaseAdmin.from('domain_names').insert({
-    domain_name: domainName,
-    user_id: user.id,
+  const { data, error } = await supabaseAdmin
+    .from('domain_names')
+    .insert({
+      domain_name: domainName,
+      user_id: user.id,
+    })
+    .select('id')
+    .single()
+
+  if (error) {
+    return new Response(
+      JSON.stringify({
+        code: 'INSERT_ERROR',
+        message: error.message,
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+  }
+
+  return new Response(JSON.stringify(data), {
+    headers: {
+      'Content-Type': 'application/json;',
+    },
   })
-
-  // We have to add the domains in order because of the redirect on the second domain
-  const apexResponse = await fetch(
-    `https://api.vercel.com/v10/projects/${process.env.VERCEL_PROJECT_ID}/domains?teamId=${process.env.VERCEL_TEAM_ID}`,
-    {
-      body: JSON.stringify({
-        name: domainName,
-      }),
-      headers: {
-        Authorization: `Bearer ${process.env.VERCEL_AUTH_BEARER_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-    }
-  )
-
-  const wwwResponse = await fetch(
-    `https://api.vercel.com/v10/projects/${process.env.VERCEL_PROJECT_ID}/domains?teamId=${process.env.VERCEL_TEAM_ID}`,
-    {
-      body: JSON.stringify({
-        name: `www.${domainName}`,
-        redirect: domainName,
-        redirectStatusCode: 308,
-      }),
-      headers: {
-        Authorization: `Bearer ${process.env.VERCEL_AUTH_BEARER_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-    }
-  )
-
-  const apexData = await apexResponse.json()
-  const wwwData = await wwwResponse.json()
-
-  return new Response(
-    JSON.stringify({
-      apex: {
-        domainName: apexData.name,
-        verificationRecords: apexData.verification,
-      },
-      www: {
-        domainName: wwwData.name,
-        verificationRecords: wwwData.verification,
-      },
-    }),
-    {
-      headers: {
-        'Content-Type': 'application/json;',
-      },
-    }
-  )
 }

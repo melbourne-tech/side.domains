@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Plus } from 'lucide-react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
@@ -38,8 +39,7 @@ const AddDomain = () => {
 
       toast({
         title: 'Domain added',
-        description:
-          'Your domain has been added. Please add the required records.',
+        description: 'Your domain has been added.',
       })
     } catch (error) {
       if (error instanceof ValidationError) {
@@ -69,7 +69,7 @@ const AddDomain = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex items-end gap-4 shadow-lg p-4 rounded-lg"
+        className="flex flex-col gap-4 shadow-lg p-4 rounded-lg"
       >
         <FormField
           control={form.control}
@@ -90,7 +90,9 @@ const AddDomain = () => {
           type="submit"
           isLoading={form.formState.isSubmitting}
           disabled={form.formState.isSubmitting}
+          className="self-end"
         >
+          <Plus className="h-4 w-4" />
           Add Domain
         </Button>
       </form>

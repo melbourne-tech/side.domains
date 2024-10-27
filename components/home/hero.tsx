@@ -2,7 +2,6 @@ import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '~/components/ui/button'
 import { Checkmark } from '~/components/ui/checkmark'
-import ForSalePage from '~/pages/sell/[domain]'
 
 const Hero = () => {
   return (
@@ -34,34 +33,44 @@ const Hero = () => {
       <div className="mx-auto max-w-7xl px-6 pb-24 pt-10 sm:pb-32 lg:flex lg:px-8 lg:py-40">
         <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-xl lg:flex-shrink-0 lg:pt-8">
           <h1 className="mt-10 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-            Bought another domain? Us too.
+            Your toolkit for side project domains
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-600">
-            Simple sales pages for your extra side project domains.
+            Check availability, watch expiry dates, and sell unused domains.
+            Everything you need to manage domains for your side projects.
           </p>
 
           <div className="flex flex-col gap-2 mt-4">
             <div className="flex gap-2 items-center">
               <Checkmark />
-              <span className="font-medium">Unlimited Domain Names</span>
+              <span className="font-medium">
+                Instant domain availability checks
+              </span>
             </div>
 
             <div className="flex gap-2 items-center">
               <Checkmark />
-              <span className="font-medium">0% Commission</span>
+              <span className="font-medium">
+                Email alerts when domains expire
+              </span>
             </div>
 
             <div className="flex gap-2 items-center">
               <Checkmark />
-              <span className="font-medium">Included SSL/TLS</span>
+              <span className="font-medium">
+                For-sale pages with SSL included
+              </span>
             </div>
           </div>
 
           <div className="mt-10 flex items-center gap-x-6">
-            <Button asChild variant="outline" size="lg">
-              <Link href="https://app.side.domains/sign-in">
-                Get Started <ArrowRight size={16} />
+            <Button asChild size="lg">
+              <Link href="https://app.side.domains/sign-up">
+                Try the Toolkit <ArrowRight size={16} />
               </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link href="#how-it-works">See How It Works</Link>
             </Button>
           </div>
         </div>
@@ -70,7 +79,11 @@ const Hero = () => {
           <div className="max-w-3xl flex-none sm:max-w-5xl lg:max-w-none">
             <div className="-m-2 rounded-xl bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
               <div className="relative overflow-hidden w-[48rem] h-[38rem] flex flex-col items-center justify-center">
-                <ForSalePage domain="yourdomain.com" showPoweredBy={false} />
+                <img
+                  src="/api/placeholder/800/600"
+                  alt="Domain toolkit dashboard"
+                  className="rounded-lg shadow-lg"
+                />
               </div>
             </div>
           </div>
