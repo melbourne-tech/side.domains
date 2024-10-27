@@ -1,35 +1,11 @@
-import { ArrowRightIcon, CheckIcon } from 'lucide-react'
-import { Button } from '~/components/ui/button'
-import { cn } from '~/lib/utils'
+import { CheckIcon } from 'lucide-react'
+import PurchasePlans from '../purchase-plans'
 
 const features = [
   'Check domain availability',
   'Watch unlimited domains',
   'Email notifications for expiry',
   'For-sale pages with SSL',
-]
-
-const tiers = [
-  {
-    name: 'Monthly Plan',
-    id: 'monthly',
-    href: `${process.env.NEXT_PUBLIC_LEMON_SQUEEZY_STORE_URL}/checkout/buy/${process.env.NEXT_PUBLIC_LEMON_SQUEEZY_VARIANT_ID}`,
-    price: '$5',
-    period: '/month',
-    description: 'Pay monthly, cancel anytime',
-    ctaText: 'Start Monthly Plan',
-    featured: false,
-  },
-  {
-    name: 'Lifetime Access',
-    id: 'lifetime',
-    href: `${process.env.NEXT_PUBLIC_LEMON_SQUEEZY_STORE_URL}/checkout/buy/${process.env.NEXT_PUBLIC_LEMON_SQUEEZY_VARIANT_ID}`,
-    price: '$49',
-    period: 'one-time',
-    description: 'Pay once, use forever',
-    ctaText: 'Get Lifetime Access',
-    featured: true,
-  },
 ]
 
 const Pricing = () => {
@@ -71,63 +47,12 @@ const Pricing = () => {
       </div>
 
       {/* Pricing Cards */}
-      <div className="mx-auto mt-16 grid max-w-xl grid-cols-1 gap-y-6 sm:mt-20 lg:max-w-4xl lg:grid-cols-2 lg:gap-x-8">
-        {tiers.map((tier) => (
-          <div
-            key={tier.id}
-            className={cn(
-              'rounded-3xl p-8 ring-1',
-              tier.featured
-                ? 'bg-gray-900 ring-gray-900 text-white'
-                : 'ring-gray-200 bg-white'
-            )}
-          >
-            <h3
-              className={cn(
-                'text-lg font-semibold leading-8',
-                tier.featured ? 'text-white' : 'text-gray-900'
-              )}
-            >
-              {tier.name}
-            </h3>
-            <p className="mt-4 flex items-baseline gap-x-2">
-              <span className="text-4xl font-bold tracking-tight">
-                {tier.price}
-              </span>
-              <span
-                className={cn(
-                  'text-sm',
-                  tier.featured ? 'text-gray-400' : 'text-gray-500'
-                )}
-              >
-                {tier.period}
-              </span>
-            </p>
-            <p
-              className={cn(
-                'mt-6 text-sm leading-6',
-                tier.featured ? 'text-gray-300' : 'text-gray-600'
-              )}
-            >
-              {tier.description}
-            </p>
-            <Button
-              asChild
-              variant={tier.featured ? 'secondary' : 'outline'}
-              className="w-full mt-6"
-            >
-              <a href={tier.href} aria-describedby={tier.id}>
-                {tier.ctaText} <ArrowRightIcon size={16} />
-              </a>
-            </Button>
-          </div>
-        ))}
-      </div>
+      <PurchasePlans />
 
       <p className="text-center text-sm text-gray-500 mt-8">
         Want to self-host?{' '}
         <a
-          href="https://github.com/alaister/side.domains"
+          href="https://github.com/melbourne-tech/side.domains"
           className="text-indigo-600 hover:text-indigo-500"
         >
           The code is on GitHub

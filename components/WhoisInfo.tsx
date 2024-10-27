@@ -60,7 +60,7 @@ const WhoisInfo = ({ data }: WhoisInfoProps) => {
       return Object.entries(data)
         .filter(([key]) => !excludeFields.includes(key))
         .map(([key, value]) => (
-          <div key={key} className="flex flex-col gap-1 py-1.5">
+          <div key={key} className="flex flex-col gap-1 py-1.5 break-all">
             <dt className="text-xs font-semibold text-gray-600 capitalize">
               {key.replace(/_/g, ' ')}
             </dt>

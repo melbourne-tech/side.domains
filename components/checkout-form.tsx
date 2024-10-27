@@ -4,24 +4,31 @@ import {
 } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import { useCallback, useMemo } from 'react'
-import { fetchAPI } from '~/lib/fetcher'
+import supabase from '~/lib/supabase'
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 )
 
-const PurchasePage = () => {
+interface CheckoutFormProps {
+  planType: 'MONTHLY' | 'LIFETIME'
+}
+
+const CheckoutForm = ({ planType }: CheckoutFormProps) => {
   const fetchClientSecret = useCallback(() => {
-    return fetchAPI<{ clientSecret: string }>('/billing/checkout', 'POST').then(
-      (data) => data.clientSecret
-    )
-  }, [])
+    return supabase.functions
+      .invoke('stripe-checkout', { body: { planType } })
+      .then(({ data }) => data?.clientSecret)
+  }, [planType])
 
   return (
     <div id="checkout">
       <EmbeddedCheckoutProvider
         stripe={stripePromise}
-        options={useMemo(() => ({ fetchClientSecret }), [fetchClientSecret])}
+        options={useMemo(
+          () => ({ fetchClientSecret, onComplete: console.log }),
+          [fetchClientSecret]
+        )}
       >
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
@@ -29,4 +36,4 @@ const PurchasePage = () => {
   )
 }
 
-export default PurchasePage
+export default CheckoutForm

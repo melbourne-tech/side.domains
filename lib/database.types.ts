@@ -79,22 +79,28 @@ export type Database = {
       user_data: {
         Row: {
           created_at: string
-          data: Json
           email: string
+          is_subscribed: boolean
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
-          data?: Json
           email: string
+          is_subscribed?: boolean
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
-          data?: Json
           email?: string
+          is_subscribed?: boolean
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -105,12 +111,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_user_purchased: {
-        Args: {
-          user_id: string
-        }
-        Returns: boolean
-      }
       update_whois: {
         Args: {
           domain_name_id: string

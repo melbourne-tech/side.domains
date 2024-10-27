@@ -17,7 +17,7 @@ const HomePage = () => {
         <title>{title}</title>
         <meta name="description" content={description} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:creator" content="@alaisteryoung" />
+        <meta name="twitter:creator" content="@melb_dot_tech" />
         <meta property="og:url" content="https://side.domains/" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />

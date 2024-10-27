@@ -60,45 +60,47 @@ const SignInPage: NextPageWithLayout = () => {
   }, [form.formState.isSubmitSuccessful, form.reset])
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-8"
-      >
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="you@yourdomain.com" {...field} />
-              </FormControl>
-              <FormDescription>
-                Use the same email you used at checkout.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <>
+      <h2 className="text-3xl font-bold tracking-tight py-6">Sign In</h2>
 
-        <Button
-          type="submit"
-          isLoading={form.formState.isSubmitting}
-          disabled={form.formState.isSubmitting}
-          className="self-end"
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-col gap-8"
         >
-          Sign In / Sign Up
-        </Button>
-      </form>
-    </Form>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder="you@yourdomain.com" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Use the same email you used at checkout.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type="submit"
+            isLoading={form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting}
+            className="self-end"
+          >
+            Sign In / Sign Up
+          </Button>
+        </form>
+      </Form>
+    </>
   )
 }
 
 SignInPage.getLayout = (page) => (
-  <AppLayout title="Sign In" showSignOut={false}>
-    {page}
-  </AppLayout>
+  <AppLayout showSignOut={false}>{page}</AppLayout>
 )
 
 export default SignInPage

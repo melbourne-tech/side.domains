@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
 
   const { data } = await supabaseAdmin
     .from('domain_names')
-    .select()
+    .select('domain_name,updated_at,user_id')
     .eq('id', domain_name_id)
     .maybeSingle()
 
@@ -35,11 +35,22 @@ Deno.serve(async (req) => {
     return new Response(null, { status: 404 })
   }
 
-  const { domain_name, updated_at } = data
+  const { domain_name, updated_at, user_id } = data
+
+  const { data: userData, error: userError } = await supabaseAdmin
+    .from('user_data')
+    .select('email')
+    .eq('user_id', user_id)
+    .single()
+
+  if (userError) {
+    console.error('error fetching user data:', userError)
+    return new Response(null, { status: 500 })
+  }
 
   const { error } = await resend.emails.send({
     from: 'side.domains Notifications <notifications@side.domains>',
-    to: 'a@alaisteryoung.com',
+    to: userData.email,
     subject: `Status update for ${data.domain_name}: ${previous_status} → ${new_status}`,
     react: StatusChangeNotificationEmail({
       domain_name,

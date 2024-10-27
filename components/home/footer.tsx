@@ -3,12 +3,12 @@ import { GithubIcon, TwitterIcon } from 'lucide-react'
 const SOCIAL = [
   {
     name: 'Twitter',
-    href: 'https://twitter.com/alaisteryoung',
+    href: 'https://twitter.com/melb_dot_tech',
     icon: <TwitterIcon className="h-6 w-6" aria-hidden="true" />,
   },
   {
     name: 'GitHub',
-    href: 'https://github.com/alaister/side.domains',
+    href: 'https://github.com/melbourne-tech/side.domains',
     icon: <GithubIcon className="h-6 w-6" aria-hidden="true" />,
   },
 ]

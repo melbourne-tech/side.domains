@@ -57,3 +57,16 @@ import_map = "functions/import_map.json"
 [functions.update-whois]
 enabled = true
 import_map = "functions/import_map.json"
+
+[functions.stripe-checkout]
+enabled = true
+import_map = "functions/import_map.json"
+
+[functions.stripe-session-status]
+enabled = true
+import_map = "functions/import_map.json"
+
+[functions.stripe-webhook]
+enabled = true
+import_map = "functions/import_map.json"
+verify_jwt = false

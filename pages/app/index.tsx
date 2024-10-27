@@ -19,49 +19,53 @@ const IndexPage: NextPageWithLayout = () => {
   } = useDomainNamesQuery()
 
   return (
-    <div className="flex flex-col gap-4">
-      <AddDomain />
+    <>
+      <h2 className="text-3xl font-bold tracking-tight py-6">Domains</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {isLoading && (
-          <>
-            <DomainOverviewSkeleton />
-            <DomainOverviewSkeleton />
-            <DomainOverviewSkeleton />
-            <DomainOverviewSkeleton />
-          </>
-        )}
+      <div className="flex flex-col gap-4">
+        <AddDomain />
 
-        {isError && (
-          <Alert variant="destructive" className="col-span-2">
-            <AlertTitle>Couldn&apos;t load domains</AlertTitle>
-            <AlertDescription>
-              {(error as PostgrestError)?.message ?? 'Something went wrong'}
-            </AlertDescription>
-          </Alert>
-        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {isLoading && (
+            <>
+              <DomainOverviewSkeleton />
+              <DomainOverviewSkeleton />
+              <DomainOverviewSkeleton />
+              <DomainOverviewSkeleton />
+            </>
+          )}
 
-        {isSuccess && (
-          <>
-            {domainNames.length > 0 ? (
-              domainNames.map((domainName) => (
-                <DomainCard key={domainName.id} domain={domainName} />
-              ))
-            ) : (
-              <Alert className="col-span-2">
-                <AlertTitle>No domains</AlertTitle>
-                <AlertDescription>
-                  You don&apos;t have any domains yet. Add one to get started.
-                </AlertDescription>
-              </Alert>
-            )}
-          </>
-        )}
+          {isError && (
+            <Alert variant="destructive" className="col-span-2">
+              <AlertTitle>Couldn&apos;t load domains</AlertTitle>
+              <AlertDescription>
+                {(error as PostgrestError)?.message ?? 'Something went wrong'}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {isSuccess && (
+            <>
+              {domainNames.length > 0 ? (
+                domainNames.map((domainName) => (
+                  <DomainCard key={domainName.id} domain={domainName} />
+                ))
+              ) : (
+                <Alert className="col-span-2">
+                  <AlertTitle>No domains</AlertTitle>
+                  <AlertDescription>
+                    You don&apos;t have any domains yet. Add one to get started.
+                  </AlertDescription>
+                </Alert>
+              )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
-IndexPage.getLayout = (page) => <AppLayout title="Domains">{page}</AppLayout>
+IndexPage.getLayout = (page) => <AppLayout>{page}</AppLayout>
 
 export default withAuth(withPurchased(IndexPage))
