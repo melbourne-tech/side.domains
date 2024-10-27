@@ -1,6 +1,6 @@
 services:
   side-domains:
-    image: ghcr.io/melbourne-tech/side.domains:sha-bdad55c
+    image: ghcr.io/melbourne-tech/side.domains:sha-d3b2b1e
     restart: unless-stopped
     environment:
       - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
@@ -8,6 +8,7 @@ services:
       - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
       - NEXT_PUBLIC_ROOT_DOMAIN=${NEXT_PUBLIC_ROOT_DOMAIN}
+      - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
       start_period: 15s
