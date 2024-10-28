@@ -1,8 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { MailIcon } from 'lucide-react'
+import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import AppLayout from '~/components/layouts/AppLayout'
+import OrDivider from '~/components/or-divider'
+import GitHubSignInButton from '~/components/sign-in-with-github-button'
 import { Button } from '~/components/ui/button'
 import {
   Form,
@@ -15,6 +19,7 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { useToast } from '~/components/ui/use-toast'
+import { useIsSignedIn } from '~/lib/contexts/auth'
 import supabase from '~/lib/supabase'
 import { NextPageWithLayout } from '~/lib/types'
 
@@ -23,6 +28,15 @@ const formSchema = z.object({
 })
 
 const SignInPage: NextPageWithLayout = () => {
+  const router = useRouter()
+
+  const isSignedIn = useIsSignedIn()
+  useEffect(() => {
+    if (isSignedIn) {
+      router.replace('/')
+    }
+  }, [isSignedIn, router])
+
   const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -60,8 +74,19 @@ const SignInPage: NextPageWithLayout = () => {
   }, [form.formState.isSubmitSuccessful, form.reset])
 
   return (
-    <>
-      <h2 className="text-3xl font-bold tracking-tight py-6">Sign In</h2>
+    <div className="flex flex-col gap-6 mt-6">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">Sign In</h2>
+
+        <p>
+          To get started, sign in or sign up with your GitHub account or email
+          address.
+        </p>
+      </div>
+
+      <GitHubSignInButton className="self-start" />
+
+      <OrDivider className="max-w-96 mx-auto" />
 
       <Form {...form}>
         <form
@@ -87,15 +112,17 @@ const SignInPage: NextPageWithLayout = () => {
 
           <Button
             type="submit"
+            variant="outline"
             isLoading={form.formState.isSubmitting}
             disabled={form.formState.isSubmitting}
             className="self-end"
           >
+            <MailIcon className="w-4 h-4" />
             Sign In / Sign Up
           </Button>
         </form>
       </Form>
-    </>
+    </div>
   )
 }
 
