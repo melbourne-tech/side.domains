@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import useScroll from '~/lib/hooks/use-scroll'
 import { cn } from '~/lib/utils'
+import Logo from '../logo'
 import { Button } from '../ui/button'
 
 const HomeNav = () => {
@@ -12,22 +13,20 @@ const HomeNav = () => {
         'border-b border-gray-200 bg-white/75 backdrop-blur-lg': scrolled,
       })}
     >
-      <div className="mx-auto w-full max-w-screen-xl px-2.5 md:px-20">
+      <div className="mx-auto w-full max-w-7xl px-6">
         <div className="flex h-14 items-center justify-between">
-          <Link href="/">side.domains</Link>
+          <Logo />
 
-          <div className="hidden items-center space-x-6 sm:flex">
+          <div className="flex items-center gap-6">
             <Link
               href="#pricing"
-              className="rounded-md text-sm font-medium capitalize text-gray-800 transition-colors ease-out hover:text-black"
+              className="hidden sm:flex rounded-md text-sm font-medium capitalize text-gray-800 transition-colors ease-out hover:text-black"
             >
               Pricing
             </Link>
 
             <Button asChild size="sm">
-              <Link href="https://app.side.domains/sign-in">
-                Sign In / Sign Up
-              </Link>
+              <Link href="https://app.side.domains/sign-in">Dashboard</Link>
             </Button>
           </div>
         </div>

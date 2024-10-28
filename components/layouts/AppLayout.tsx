@@ -1,9 +1,11 @@
 import { CircleFadingArrowUp } from 'lucide-react'
+import Link from 'next/link'
 import { PropsWithChildren } from 'react'
 import { useSignOutMutation } from '~/lib/data/sign-out-mutation'
 import { useUserDataQuery } from '~/lib/data/user-data-query'
+import Logo from '../logo'
 import { Button } from '../ui/button'
-import Link from 'next/link'
+import Footer from '../footer'
 
 export type AppLayoutProps = {
   showSignOut?: boolean
@@ -17,12 +19,10 @@ const AppLayout = ({
   const { mutate: signOut, isLoading } = useSignOutMutation()
 
   return (
-    <div className="flex flex-col">
+    <div className="h-full flex flex-col">
       <div className="border-b">
         <div className="flex h-16 justify-between items-center px-4">
-          <Link href="/" className="font-medium">
-            side.domains
-          </Link>
+          <Logo />
 
           <div className="flex items-center gap-2">
             {isSuccess && data.isSubscribed && !data.isLifetime && (
@@ -49,7 +49,9 @@ const AppLayout = ({
         </div>
       </div>
 
-      <main className="mx-auto max-w-5xl w-full px-4">{children}</main>
+      <main className="flex-1 mx-auto max-w-5xl w-full px-4">{children}</main>
+
+      <Footer />
     </div>
   )
 }

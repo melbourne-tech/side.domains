@@ -31,7 +31,15 @@ const Footer = () => {
         ))}
       </div>
       <p className="mt-8 text-xs leading-5 text-gray-400 md:order-1 md:mt-0">
-        &copy; {CURRENT_YEAR} side.domains. All rights reserved.
+        &copy; {CURRENT_YEAR}{' '}
+        <a
+          href="https://www.melbournetech.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Melbourne Tech, LLC
+        </a>
+        . All rights reserved.
       </p>
     </div>
   )
