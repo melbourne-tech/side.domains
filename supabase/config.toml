@@ -70,3 +70,7 @@ import_map = "functions/import_map.json"
 enabled = true
 import_map = "functions/import_map.json"
 verify_jwt = false
+
+[functions.add-domain]
+enabled = true
+import_map = "functions/import_map.json"

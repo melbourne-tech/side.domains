@@ -12,10 +12,14 @@ const UpgradePage: NextPageWithLayout = () => {
     <>
       <h2 className="text-3xl font-bold tracking-tight py-6">Upgrade</h2>
 
-      {!data?.isLifetime ? (
+      {!data?.isSubscribed ? (
+        <PurchasePlans />
+      ) : !data.isLifetime ? (
         <CheckoutForm planType="LIFETIME" />
       ) : (
-        <PurchasePlans />
+        <div className="text-center">
+          <p>You already have a lifetime subscription.</p>
+        </div>
       )}
     </>
   )
