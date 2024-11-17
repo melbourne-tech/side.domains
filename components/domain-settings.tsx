@@ -12,9 +12,9 @@ interface DomainSettingsProps {
 }
 
 const DomainSettings = ({ domain }: DomainSettingsProps) => {
-  const { mutate: updateDomain, isLoading: isUpdatingDomain } =
+  const { mutate: updateDomain, isPending: isUpdatingDomain } =
     useDomainUpdateMutation()
-  const { mutate: deleteDomain, isLoading: isDeletingDomain } =
+  const { mutate: deleteDomain, isPending: isDeletingDomain } =
     useDomainDeleteMutation()
 
   return (

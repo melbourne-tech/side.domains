@@ -56,9 +56,9 @@ const getStatusDetails = (status: Domain['status']) => {
 }
 
 const DomainCard = ({ domain }: DomainCardProps) => {
-  const { mutate: updateDomain, isLoading: isUpdatingDomain } =
+  const { mutate: updateDomain, isPending: isUpdatingDomain } =
     useDomainUpdateMutation()
-  const { mutate: updateWhois, isLoading: isUpdatingWhois } =
+  const { mutate: updateWhois, isPending: isUpdatingWhois } =
     useUpdateWhoisMutation()
 
   const expiryDate = domain.expires_at !== null && new Date(domain.expires_at)

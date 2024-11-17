@@ -10,8 +10,8 @@ export interface DomainUpdateVariables {
 export function useDomainUpdateMutation() {
   const queryClient = useQueryClient()
 
-  return useMutation(
-    async ({
+  return useMutation({
+    mutationFn: async ({
       id,
       isOwned,
       statusChangeNotificationsEnabled,
@@ -30,10 +30,8 @@ export function useDomainUpdateMutation() {
 
       return data
     },
-    {
-      async onSuccess() {
-        await queryClient.invalidateQueries(['domain-names'])
-      },
-    }
-  )
+    async onSuccess() {
+      await queryClient.invalidateQueries({ queryKey: ['domain-names'] })
+    },
+  })
 }

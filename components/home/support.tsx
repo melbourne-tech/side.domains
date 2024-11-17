@@ -2,7 +2,7 @@ import { MailIcon } from 'lucide-react'
 
 const Support = () => {
   return (
-    <div className="mt-16 sm:mt-20 flex flex-col gap-4 mx-auto max-w-2xl text-center lg:max-w-4xl">
+    <div className="mt-16 sm:mt-20 px-4 flex flex-col gap-4 mx-auto max-w-2xl text-center lg:max-w-4xl">
       <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
         Any questions?
       </h2>
@@ -17,7 +17,7 @@ const Support = () => {
         className="flex gap-2 items-center justify-center text-blue-600 group-hover:underline group-hover:text-blue-700 transition-colors"
       >
         <MailIcon size={18} />
-        <span>support@side.domains</span>
+        <span>support@melbournetech.com</span>
       </a>
     </div>
   )

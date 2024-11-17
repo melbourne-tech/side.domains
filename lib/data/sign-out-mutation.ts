@@ -6,22 +6,20 @@ export function useSignOutMutation(shouldRedirect = true) {
   const router = useRouter()
   const queryClient = useQueryClient()
 
-  return useMutation(
-    async () => {
+  return useMutation({
+    mutationFn: async () => {
       const { error } = await supabase.auth.signOut()
 
       if (error) {
         throw error
       }
     },
-    {
-      async onSuccess() {
-        if (shouldRedirect) {
-          await router.push('/sign-in')
-        }
+    async onSuccess() {
+      if (shouldRedirect) {
+        await router.push('/sign-in')
+      }
 
-        await queryClient.resetQueries()
-      },
-    }
-  )
+      await queryClient.resetQueries()
+    },
+  })
 }

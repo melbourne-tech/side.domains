@@ -8,8 +8,8 @@ export interface UpdateWhoisVariables {
 export function useUpdateWhoisMutation() {
   const queryClient = useQueryClient()
 
-  return useMutation(
-    async ({ id }: UpdateWhoisVariables) => {
+  return useMutation({
+    mutationFn: async ({ id }: UpdateWhoisVariables) => {
       const { data, error } = await supabase.functions.invoke('update-whois', {
         body: { id },
       })
@@ -20,10 +20,8 @@ export function useUpdateWhoisMutation() {
 
       return data
     },
-    {
-      async onSuccess() {
-        await queryClient.invalidateQueries(['domain-names'])
-      },
-    }
-  )
+    async onSuccess() {
+      await queryClient.invalidateQueries({ queryKey: ['domain-names'] })
+    },
+  })
 }

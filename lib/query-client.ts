@@ -1,6 +1,5 @@
 import { QueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { NotFoundError } from './errors'
 
 let queryClient: QueryClient | undefined
 
@@ -13,7 +12,11 @@ export function getQueryClient() {
           staleTime: 60 * 1000, // 1 minute
           retry: (failureCount, error) => {
             // Don't retry on 404s
-            if (error instanceof NotFoundError) {
+            if (
+              typeof error === 'object' &&
+              error !== null &&
+              error['code'] === 'PGRST116'
+            ) {
               return false
             }
 

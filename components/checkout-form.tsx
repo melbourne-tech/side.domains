@@ -26,7 +26,9 @@ const CheckoutForm = ({ planType }: CheckoutFormProps) => {
       <EmbeddedCheckoutProvider
         stripe={stripePromise}
         options={useMemo(
-          () => ({ fetchClientSecret, onComplete: console.log }),
+          () => ({
+            fetchClientSecret,
+          }),
           [fetchClientSecret]
         )}
       >

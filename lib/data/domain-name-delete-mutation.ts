@@ -8,8 +8,8 @@ export interface DomainDeleteVariables {
 export function useDomainDeleteMutation() {
   const queryClient = useQueryClient()
 
-  return useMutation(
-    async ({ id }: DomainDeleteVariables) => {
+  return useMutation({
+    mutationFn: async ({ id }: DomainDeleteVariables) => {
       const { data, error } = await supabase
         .from('domain_names')
         .delete()
@@ -21,10 +21,8 @@ export function useDomainDeleteMutation() {
 
       return data
     },
-    {
-      async onSuccess() {
-        await queryClient.invalidateQueries(['domain-names'])
-      },
-    }
-  )
+    async onSuccess() {
+      await queryClient.invalidateQueries({ queryKey: ['domain-names'] })
+    },
+  })
 }

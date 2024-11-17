@@ -9,11 +9,12 @@ export type UserData = {
 }
 
 export async function getUserData(signal?: AbortSignal) {
-  const query = supabase
+  let query = supabase
     .from('user_data')
     .select('user_id,is_subscribed,stripe_subscription_id')
+
   if (signal) {
-    query.abortSignal(signal)
+    query = query.abortSignal(signal)
   }
 
   const { data, error } = await query.single()
@@ -23,14 +24,16 @@ export async function getUserData(signal?: AbortSignal) {
 
   return {
     isSubscribed: data.is_subscribed,
-    isLifetime: data.stripe_subscription_id === null,
+    isLifetime: data.is_subscribed && data.stripe_subscription_id === null,
   } as UserData
 }
 
 export function useUserDataQuery() {
   const isFinishedLoading = useIsInitialLoadFinished()
 
-  return useQuery(['user-data'], async ({ signal }) => getUserData(signal), {
+  return useQuery({
+    queryKey: ['user-data'],
+    queryFn: ({ signal }) => getUserData(signal),
     enabled: isFinishedLoading,
   })
 }
@@ -38,7 +41,8 @@ export function useUserDataQuery() {
 export function prefetchUserData() {
   const queryClient = getQueryClient()
 
-  return queryClient.prefetchQuery(['user-data'], ({ signal }) =>
-    getUserData(signal)
-  )
+  return queryClient.prefetchQuery({
+    queryKey: ['user-data'],
+    queryFn: ({ signal }) => getUserData(signal),
+  })
 }
