@@ -22,18 +22,10 @@ export async function getSessionStatus(sessionId?: string) {
 export function useSessionStatusQuery(sessionId?: string) {
   const isFinishedLoading = useIsInitialLoadFinished()
 
-  return useQuery(
-    ['stripe-session-status', sessionId],
-    async () => getSessionStatus(sessionId),
-    {
-      enabled: isFinishedLoading && Boolean(sessionId),
-      refetchInterval(data) {
-        if (data !== 'complete') {
-          return 1000
-        }
-
-        return false
-      },
-    }
-  )
+  return useQuery({
+    queryKey: ['stripe-session-status', sessionId],
+    queryFn: () => getSessionStatus(sessionId),
+    enabled: isFinishedLoading && Boolean(sessionId),
+    refetchInterval: 1000,
+  })
 }

@@ -1,26 +1,38 @@
 import { PostgrestError } from '@supabase/supabase-js'
+import { useMemo } from 'react'
 import AddDomain from '~/components/add-domain'
 import DomainCard from '~/components/domain-card'
 import DomainOverviewSkeleton from '~/components/domain-card-skeleton'
 import AppLayout from '~/components/layouts/AppLayout'
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
-import { useDomainNamesQuery } from '~/lib/data/domain-names-query'
+import { Button } from '~/components/ui/button'
+import { useDomainNamesLiveQuery } from '~/lib/data/domain-names-query'
 import { withAuth } from '~/lib/hocs/with-auth'
-import { withPurchased } from '~/lib/hocs/with-purchased'
 import { NextPageWithLayout } from '~/lib/types'
 
 const IndexPage: NextPageWithLayout = () => {
   const {
-    data: domainNames,
+    data,
     isLoading,
     isSuccess,
     isError,
     error,
-  } = useDomainNamesQuery()
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useDomainNamesLiveQuery()
+
+  const count = data?.pages[0]?.count
+  const domainNames = useMemo(
+    () => data?.pages.flatMap((page) => page.domainNames) ?? [],
+    [data]
+  )
 
   return (
     <>
-      <h2 className="text-3xl font-bold tracking-tight py-6">Domains</h2>
+      <h2 className="text-3xl font-bold tracking-tight py-6">
+        Domains{isSuccess && ` (${count})`}
+      </h2>
 
       <div className="flex flex-col gap-4">
         <AddDomain />
@@ -39,7 +51,8 @@ const IndexPage: NextPageWithLayout = () => {
             <Alert variant="destructive" className="col-span-2">
               <AlertTitle>Couldn&apos;t load domains</AlertTitle>
               <AlertDescription>
-                {(error as PostgrestError)?.message ?? 'Something went wrong'}
+                {(error as unknown as PostgrestError)?.message ??
+                  'Something went wrong'}
               </AlertDescription>
             </Alert>
           )}
@@ -47,9 +60,24 @@ const IndexPage: NextPageWithLayout = () => {
           {isSuccess && (
             <>
               {domainNames.length > 0 ? (
-                domainNames.map((domainName) => (
-                  <DomainCard key={domainName.id} domain={domainName} />
-                ))
+                <>
+                  {domainNames.map((domainName) => (
+                    <DomainCard key={domainName.id} domain={domainName} />
+                  ))}
+
+                  <div className="col-span-2">
+                    {hasNextPage && (
+                      <Button
+                        onClick={() => fetchNextPage()}
+                        disabled={isFetchingNextPage}
+                        isLoading={isFetchingNextPage}
+                        variant="secondary"
+                      >
+                        Load more
+                      </Button>
+                    )}
+                  </div>
+                </>
               ) : (
                 <Alert className="col-span-2">
                   <AlertTitle>No domains</AlertTitle>
@@ -66,6 +94,6 @@ const IndexPage: NextPageWithLayout = () => {
   )
 }
 
-IndexPage.getLayout = (page) => <AppLayout>{page}</AppLayout>
+IndexPage.getLayout = (page) => <AppLayout title="Dashboard">{page}</AppLayout>
 
-export default withAuth(withPurchased(IndexPage))
+export default withAuth(IndexPage)

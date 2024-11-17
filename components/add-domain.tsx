@@ -7,7 +7,6 @@ import { Button } from '~/components/ui/button'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,7 +15,6 @@ import {
 import { Input } from '~/components/ui/input'
 import { useToast } from '~/components/ui/use-toast'
 import { useDomainAddMutation } from '~/lib/data/domain-name-add-mutation'
-import { ValidationError } from '~/lib/errors'
 
 const formSchema = z.object({
   domainName: z.string().min(1, 'Domain must not be empty'),
@@ -42,13 +40,6 @@ const AddDomain = () => {
         description: 'Your domain has been added.',
       })
     } catch (error) {
-      if (error instanceof ValidationError) {
-        Object.entries(error.errors.fieldErrors).forEach(([key, value]) => {
-          form.setError(key as any, { message: value?.[0] as any })
-        })
-        return
-      }
-
       toast({
         title: 'Something went wrong',
         description: error.message,
@@ -69,7 +60,7 @@ const AddDomain = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 shadow-lg p-4 rounded-lg"
+        className="flex gap-4 shadow-lg p-4 rounded-lg border border-gray-200"
       >
         <FormField
           control={form.control}
@@ -81,7 +72,6 @@ const AddDomain = () => {
                 <Input placeholder="yourdomain.com" {...field} />
               </FormControl>
               <FormMessage />
-              <FormDescription>Do not include www.</FormDescription>
             </FormItem>
           )}
         />

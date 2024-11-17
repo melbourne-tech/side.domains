@@ -6,13 +6,27 @@ import CheckoutForm from './checkout-form'
 import { Button } from './ui/button'
 
 const sharedFeatures = [
-  'Domain Expiry Alerts',
+  'Unlimited Domain Expiry Alerts',
+  'Unlimited Sales Pages',
   'Whois Lookup',
-  'Sales Pages with SSL/TLS',
+  'SSL/TLS for Sales Pages',
   'No Commissions on Sold Domains',
 ]
 
 const tiers = [
+  {
+    name: 'Free',
+    id: 'FREE' as const,
+    price: '$0',
+    period: '/month',
+    description: 'Perfect for trying out a single domain',
+    ctaText: 'Try Free',
+    featured: false,
+    features: [
+      '1 Domain Expiry Alert / 1 Sales Page',
+      ...sharedFeatures.slice(2),
+    ],
+  },
   {
     name: 'Monthly Plan',
     id: 'MONTHLY' as const,
@@ -59,98 +73,105 @@ const PurchasePlans = () => {
   }
 
   return (
-    <div className="mx-auto mt-16 grid max-w-xl grid-cols-1 gap-y-6 sm:mt-20 lg:max-w-4xl lg:grid-cols-2 lg:gap-x-8">
-      {tiers.map((tier) => (
-        <div
-          key={tier.id}
-          className={cn(
-            'rounded-3xl p-8 ring-1 relative flex flex-col',
-            tier.featured
-              ? 'bg-gray-900 ring-gray-900 text-white'
-              : 'ring-gray-200 bg-white'
-          )}
-        >
-          <h3
+    <div
+      className={cn(
+        'mx-auto grid max-w-xl grid-cols-1 gap-y-6 lg:max-w-6xl lg:gap-x-8',
+        isSignedIn ? 'lg:grid-cols-2' : 'mt-16 sm:mt-20 lg:grid-cols-3'
+      )}
+    >
+      {tiers
+        .filter((tier) => !isSignedIn || tier.id !== 'FREE')
+        .map((tier) => (
+          <div
+            key={tier.id}
             className={cn(
-              'text-lg font-semibold leading-8',
-              tier.featured ? 'text-white' : 'text-gray-900'
+              'rounded-3xl p-8 ring-1 relative flex flex-col',
+              tier.featured
+                ? 'bg-gray-900 ring-gray-900 text-white'
+                : 'ring-gray-200 bg-white'
             )}
           >
-            {tier.name}
-          </h3>
-          <p className="mt-4 flex items-baseline gap-x-2">
-            <span className="text-4xl font-bold tracking-tight">
-              {tier.price}
-            </span>
-            <span
+            <h3
               className={cn(
-                'text-sm',
-                tier.featured ? 'text-gray-400' : 'text-gray-500'
+                'text-lg font-semibold leading-8',
+                tier.featured ? 'text-white' : 'text-gray-900'
               )}
             >
-              {tier.period}
-            </span>
-          </p>
-          <p
-            className={cn(
-              'mt-2 text-sm leading-6',
-              tier.featured ? 'text-gray-300' : 'text-gray-600'
-            )}
-          >
-            {tier.description}
-          </p>
-
-          <ul className="mt-8 space-y-3 flex-1">
-            {tier.features.map((feature) => (
-              <li key={feature} className="flex gap-x-3">
-                <CheckIcon
-                  className={cn(
-                    'h-6 w-5 flex-none',
-                    tier.featured ? 'text-gray-300' : 'text-blue-600'
-                  )}
-                  aria-hidden="true"
-                />
-                <span
-                  className={cn(
-                    'text-sm leading-6',
-                    tier.featured ? 'text-gray-300' : 'text-gray-600'
-                  )}
-                >
-                  {feature}
-                </span>
-              </li>
-            ))}
-          </ul>
-
-          {isSignedIn ? (
-            <Button
-              variant={tier.featured ? 'secondary' : 'outline'}
-              className="w-full mt-8"
-              onClick={() => setPlanType(tier.id)}
+              {tier.name}
+            </h3>
+            <p className="mt-4 flex items-baseline gap-x-2">
+              <span className="text-4xl font-bold tracking-tight">
+                {tier.price}
+              </span>
+              <span
+                className={cn(
+                  'text-sm',
+                  tier.featured ? 'text-gray-400' : 'text-gray-500'
+                )}
+              >
+                {tier.period}
+              </span>
+            </p>
+            <p
+              className={cn(
+                'mt-2 text-sm leading-6',
+                tier.featured ? 'text-gray-300' : 'text-gray-600'
+              )}
             >
-              {tier.ctaText} <ArrowRightIcon size={16} />
-            </Button>
-          ) : (
-            <Button
-              asChild
-              variant={tier.featured ? 'secondary' : 'outline'}
-              className="w-full mt-8"
-            >
-              <a href="https://app.side.domains/" aria-describedby={tier.id}>
+              {tier.description}
+            </p>
+
+            <ul className="mt-8 space-y-3 flex-1">
+              {tier.features.map((feature) => (
+                <li key={feature} className="flex gap-x-3">
+                  <CheckIcon
+                    className={cn(
+                      'h-6 w-5 flex-none',
+                      tier.featured ? 'text-gray-300' : 'text-blue-600'
+                    )}
+                    aria-hidden="true"
+                  />
+                  <span
+                    className={cn(
+                      'text-sm leading-6',
+                      tier.featured ? 'text-gray-300' : 'text-gray-600'
+                    )}
+                  >
+                    {feature}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            {isSignedIn ? (
+              <Button
+                variant={tier.featured ? 'secondary' : 'outline'}
+                className="w-full mt-8"
+                onClick={() => setPlanType(tier.id as 'MONTHLY' | 'LIFETIME')}
+              >
                 {tier.ctaText} <ArrowRightIcon size={16} />
-              </a>
-            </Button>
-          )}
+              </Button>
+            ) : (
+              <Button
+                asChild
+                variant={tier.featured ? 'secondary' : 'outline'}
+                className="w-full mt-8"
+              >
+                <a href="https://app.side.domains/" aria-describedby={tier.id}>
+                  {tier.ctaText} <ArrowRightIcon size={16} />
+                </a>
+              </Button>
+            )}
 
-          {tier.featured && (
-            <div className="absolute -top-[6px] -right-3 rotate-[8deg]">
-              <div className="bg-blue-600 border-2 border-white text-white px-3 py-1 text-xs uppercase font-semibold rounded-full shadow-lg">
-                Most Popular!
+            {tier.featured && (
+              <div className="absolute -top-[6px] -right-3 rotate-[8deg]">
+                <div className="bg-blue-600 border-2 border-white text-white px-3 py-1 text-xs uppercase font-semibold rounded-full shadow-lg">
+                  Most Popular!
+                </div>
               </div>
-            </div>
-          )}
-        </div>
-      ))}
+            )}
+          </div>
+        ))}
     </div>
   )
 }

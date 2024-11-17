@@ -8,10 +8,7 @@ export interface CheckmarkProps extends React.HTMLAttributes<HTMLDivElement> {}
 function Checkmark({ className, ...props }: CheckmarkProps) {
   return (
     <span
-      className={cn(
-        'bg-blue-400/75 rounded-full text-green-800 p-1',
-        className
-      )}
+      className={cn('bg-blue-400/75 rounded-full text-blue-800 p-1', className)}
       {...props}
     >
       <CheckIcon size={20} />

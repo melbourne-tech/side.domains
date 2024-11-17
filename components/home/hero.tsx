@@ -1,7 +1,12 @@
-import { ArrowRight } from 'lucide-react'
+import {
+  ArrowRight,
+  BellIcon,
+  DollarSignIcon,
+  EyeIcon,
+  PackageIcon,
+} from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '~/components/ui/button'
-import { Checkmark } from '~/components/ui/checkmark'
 
 const Hero = () => {
   return (
@@ -33,7 +38,7 @@ const Hero = () => {
       <div className="mx-auto max-w-7xl px-6 pb-24 pt-10">
         <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-xl lg:flex-shrink-0 lg:pt-8">
           <h1 className="mt-10 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-            Your toolkit for side project domains
+            Get the domain <i>you want</i> for your next side project.
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-600">
             Get notified when your dream domain expires, create simple sales
@@ -42,24 +47,32 @@ const Hero = () => {
 
           <div className="flex flex-col gap-2 mt-4">
             <div className="flex gap-2 items-center">
-              <Checkmark />
+              <span className="bg-blue-400/75 rounded-full text-blue-800 p-1">
+                <BellIcon size={18} />
+              </span>
               <span className="font-medium">Email Domain expiry alerts</span>
             </div>
 
             <div className="flex gap-2 items-center">
-              <Checkmark />
+              <span className="bg-blue-400/75 rounded-full text-blue-800 p-1">
+                <DollarSignIcon size={18} />
+              </span>
               <span className="font-medium">
                 For sale pages for your unused domains
               </span>
             </div>
 
             <div className="flex gap-2 items-center">
-              <Checkmark />
+              <span className="bg-blue-400/75 rounded-full text-blue-800 p-1">
+                <EyeIcon size={18} />
+              </span>
               <span className="font-medium">Easy Whois lookup & tracking</span>
             </div>
 
             <div className="flex gap-2 items-center">
-              <Checkmark />
+              <span className="bg-blue-400/75 rounded-full text-blue-800 p-1">
+                <PackageIcon size={18} />
+              </span>
               <span className="font-medium">Open source</span>
             </div>
           </div>

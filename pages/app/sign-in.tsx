@@ -127,7 +127,9 @@ const SignInPage: NextPageWithLayout = () => {
 }
 
 SignInPage.getLayout = (page) => (
-  <AppLayout showSignOut={false}>{page}</AppLayout>
+  <AppLayout showSignOut={false} title="Sign In">
+    {page}
+  </AppLayout>
 )
 
 export default SignInPage
