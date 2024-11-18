@@ -52,7 +52,7 @@ export function useDomainNamesLiveQuery() {
                 for (let domain of page.domainNames) {
                   if (domain.id === updated.id) {
                     Object.assign(domain, updated)
-                    break
+                    return
                   }
                 }
               }

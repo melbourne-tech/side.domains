@@ -74,7 +74,7 @@ const WhoisInfo = ({ data }: WhoisInfoProps) => {
                   ))}
                 </div>
               ) : (
-                value || 'N/A'
+                (typeof value === 'boolean' ? String(value) : value) || 'N/A'
               )}
             </dd>
           </div>
