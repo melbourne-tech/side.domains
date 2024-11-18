@@ -24,7 +24,7 @@ const Features = () => {
         id="whois"
         icon={<EyeIcon size={32} />}
         title="Whois Lookup"
-        description="Easily lookup and track whois information for any domain name."
+        description="Easily lookup and watch whois information for any domain name."
         imageUrl="/whois.jpg"
         variant="one"
       />

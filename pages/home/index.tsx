@@ -8,7 +8,7 @@ import Support from '~/components/home/support'
 
 const title = 'side.domains — Your toolkit for side project domains'
 const description =
-  'Get notified when your dream domain expires, create simple sales pages for your unused domains, and easily track whois information. Features include: Email Domain expiry alerts, For sale pages for your unused domains, Easy Whois lookup & tracking, and more.'
+  'Get notified when your dream domain expires, create simple sales pages for your unused domains, and easily track whois information. Features include: Email Domain expiry alerts, For sale pages for your unused domains, Easy Whois lookup & watching, and more.'
 
 const HomePage = () => {
   return (
