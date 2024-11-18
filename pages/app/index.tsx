@@ -48,7 +48,7 @@ const IndexPage: NextPageWithLayout = () => {
           )}
 
           {isError && (
-            <Alert variant="destructive" className="col-span-2">
+            <Alert variant="destructive" className="md:col-span-2">
               <AlertTitle>Couldn&apos;t load domains</AlertTitle>
               <AlertDescription>
                 {(error as unknown as PostgrestError)?.message ??
@@ -57,37 +57,34 @@ const IndexPage: NextPageWithLayout = () => {
             </Alert>
           )}
 
-          {isSuccess && (
-            <>
-              {domainNames.length > 0 ? (
-                <>
-                  {domainNames.map((domainName) => (
-                    <DomainCard key={domainName.id} domain={domainName} />
-                  ))}
+          {isSuccess &&
+            (domainNames.length > 0 ? (
+              <>
+                {domainNames.map((domainName) => (
+                  <DomainCard key={domainName.id} domain={domainName} />
+                ))}
 
-                  <div className="col-span-2">
-                    {hasNextPage && (
-                      <Button
-                        onClick={() => fetchNextPage()}
-                        disabled={isFetchingNextPage}
-                        isLoading={isFetchingNextPage}
-                        variant="secondary"
-                      >
-                        Load more
-                      </Button>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <Alert className="col-span-2">
-                  <AlertTitle>No domains</AlertTitle>
-                  <AlertDescription>
-                    You don&apos;t have any domains yet. Add one to get started.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </>
-          )}
+                <div className="md:col-span-2">
+                  {hasNextPage && (
+                    <Button
+                      onClick={() => fetchNextPage()}
+                      disabled={isFetchingNextPage}
+                      isLoading={isFetchingNextPage}
+                      variant="secondary"
+                    >
+                      Load more
+                    </Button>
+                  )}
+                </div>
+              </>
+            ) : (
+              <Alert className="md:col-span-2">
+                <AlertTitle>No domains</AlertTitle>
+                <AlertDescription>
+                  You don&apos;t have any domains yet. Add one to get started.
+                </AlertDescription>
+              </Alert>
+            ))}
         </div>
       </div>
     </>
