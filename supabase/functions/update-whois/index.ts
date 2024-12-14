@@ -57,6 +57,11 @@ Deno.serve(async (req) => {
       ? 'available'
       : 'unknown'
 
+  if (status === 'unknown') {
+    console.error('error fetching whois data:', whoisFullData)
+    return new Response(null, { status: 500, headers: corsHeaders })
+  }
+
   const { error } = await supabaseAdmin
     .from('domain_names')
     .update({
