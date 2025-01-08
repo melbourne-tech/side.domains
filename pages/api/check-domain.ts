@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import supabaseAdmin from '~/lib/supabase-admin'
+import { getSupabaseAdminClient } from '~/lib/supabase-admin'
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,6 +14,8 @@ export default async function handler(
   if (domain.startsWith('www.')) {
     domain = domain.slice(4)
   }
+
+  const supabaseAdmin = getSupabaseAdminClient()
 
   const { error } = await supabaseAdmin
     .from('domain_names')

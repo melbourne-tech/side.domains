@@ -43,8 +43,8 @@ FROM base AS runner
 
 WORKDIR /app
 
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production \
+  NEXT_TELEMETRY_DISABLED=1
 
 RUN apk add --no-cache curl
 RUN addgroup nodejs
