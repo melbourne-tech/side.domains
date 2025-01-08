@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import NewOfferEmailTemplate from '~/emails/new-offer'
 import resend from '~/emails/resend'
-import supabaseAdmin from '~/lib/supabase-admin'
+import { getSupabaseAdminClient } from '~/lib/supabase-admin'
+
+export const dynamic = 'force-dynamic'
 
 const schema = z.object({
   domainName: z.string().min(1, 'Domain name must not be empty'),
@@ -15,6 +17,8 @@ export async function POST(request: Request) {
   try {
     const body = await request.json()
     const { domainName, email, message, offer } = schema.parse(body)
+
+    const supabaseAdmin = getSupabaseAdminClient()
 
     const { data: domainInfo, error: domainInfoError } = await supabaseAdmin
       .from('domain_names')

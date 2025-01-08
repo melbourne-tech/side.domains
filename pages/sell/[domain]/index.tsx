@@ -1,10 +1,12 @@
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from 'next'
 import DomainsBackground from '~/components/domains-background'
 import SellForm from '~/components/sell/SellForm'
-import supabaseAdmin from '~/lib/supabase-admin'
+import { getSupabaseAdminClient } from '~/lib/supabase-admin'
 import { NextPageWithLayout } from '~/lib/types'
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const supabaseAdmin = getSupabaseAdminClient()
+
   const { data, error } = await supabaseAdmin
     .from('domain_names')
     .select('domain_name')

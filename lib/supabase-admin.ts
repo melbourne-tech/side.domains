@@ -3,21 +3,21 @@ import { NextApiRequest } from 'next'
 import { NextRequest } from 'next/server'
 import { Database } from './database.types'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY
+export function getSupabaseAdminClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Missing Supabase URL or key')
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error('Missing Supabase URL or key')
+  }
+
+  return createClient<Database>(supabaseUrl, supabaseServiceKey, {
+    global: { fetch },
+    auth: {
+      persistSession: typeof window !== 'undefined',
+    },
+  })
 }
-
-const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey, {
-  global: { fetch },
-  auth: {
-    persistSession: typeof window !== 'undefined',
-  },
-})
-
-export default supabaseAdmin
 
 export async function getUserFromRequest(
   request: NextRequest | NextApiRequest
@@ -30,6 +30,8 @@ export async function getUserFromRequest(
     token = request.headers['authorization']?.replace('Bearer ', '')
   }
   if (!token) return null
+
+  const supabaseAdmin = getSupabaseAdminClient()
 
   const {
     data: { user },
