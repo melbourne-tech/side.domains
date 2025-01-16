@@ -13,7 +13,7 @@ import { NextPageWithLayout } from '~/lib/types'
 const IndexPage: NextPageWithLayout = () => {
   const {
     data,
-    isLoading,
+    isPending,
     isSuccess,
     isError,
     error,
@@ -38,7 +38,7 @@ const IndexPage: NextPageWithLayout = () => {
         <AddDomain />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {isLoading && (
+          {isPending && (
             <>
               <DomainOverviewSkeleton />
               <DomainOverviewSkeleton />
