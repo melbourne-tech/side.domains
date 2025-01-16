@@ -9,7 +9,9 @@ import {
   Lock,
   RefreshCw,
   Settings2,
+  TriangleAlert,
 } from 'lucide-react'
+import { useDomainUpdateMutation } from '~/lib/data/domain-name-update-mutation'
 import { Domain } from '~/lib/data/domain-names-query'
 import { useUpdateWhoisMutation } from '~/lib/data/update-whois-mutation'
 import { cn } from '~/lib/utils'
@@ -28,7 +30,6 @@ import {
 } from './ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs'
 import DomainInfo from './WhoisInfo'
-import { useDomainUpdateMutation } from '~/lib/data/domain-name-update-mutation'
 
 interface DomainCardProps {
   domain: Domain
@@ -38,18 +39,18 @@ const getStatusDetails = (status: Domain['status']) => {
   switch (status) {
     case 'registered':
       return {
-        color: 'bg-blue-500',
+        color: 'bg-blue-600',
         icon: Lock,
       }
     case 'available':
       return {
-        color: 'bg-green-500',
+        color: 'bg-green-600',
         icon: Check,
       }
     case 'unknown':
     default:
       return {
-        color: 'bg-gray-500',
+        color: 'bg-gray-600',
         icon: CircleHelp,
       }
   }
@@ -63,45 +64,49 @@ const DomainCard = ({ domain }: DomainCardProps) => {
 
   const expiryDate = domain.expires_at !== null && new Date(domain.expires_at)
   const isExpired = expiryDate && isPast(expiryDate)
+  const daysUntilExpiry = expiryDate
+    ? Math.ceil((expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    : null
   const statusDetails = getStatusDetails(domain.status)
   const StatusIcon = statusDetails.icon
 
   return (
     <Sheet>
-      <SheetTrigger>
-        <Card className="h-full">
+      <SheetTrigger className="rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300">
+        <Card className="h-full transition transform hover:scale-[1.01] hover:shadow-lg">
           <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-gray-500" />
-              <CardTitle className="text-xl">{domain.domain_name}</CardTitle>
+            <div className="flex items-baseline gap-2">
+              <Globe className="w-4 h-4 text-gray-600" />
+              <CardTitle className="text-2xl">{domain.domain_name}</CardTitle>
             </div>
           </CardHeader>
-          <CardContent className="flex flex-col gap-2">
+          <CardContent className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-2">
-                <CircleDot className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-500">Status:</span>
-              </div>
-              <Badge
-                className={cn(
-                  statusDetails.color,
-                  'text-white flex items-center gap-1.5'
+                <CircleDot className="w-4 h-4 text-gray-600" />
+                <Badge
+                  className={cn(
+                    statusDetails.color,
+                    'text-white flex items-center gap-1.5 shadow-md'
+                  )}
+                >
+                  <StatusIcon className="w-3 h-3" />
+                  {domain.status}
+                </Badge>
+                {isExpired && (
+                  <Badge className="bg-orange-600 text-white flex items-center gap-1.5 shadow-md">
+                    <TriangleAlert className="w-3 h-3" />
+                    Expired
+                  </Badge>
                 )}
-              >
-                <StatusIcon className="w-3 h-3" />
-                {domain.status}
-              </Badge>
+              </div>
             </div>
             {expiryDate && (
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-500">
-                  Expires: {format(expiryDate, 'MMM d, yyyy')}
-                  {isExpired && (
-                    <span className="ml-2 text-red-500 font-medium">
-                      (Expired)
-                    </span>
-                  )}
+                <Calendar className="w-4 h-4 text-gray-600" />
+                <span className="text-sm text-gray-600">
+                  Expires on {format(expiryDate, 'MMM d, yyyy')}
+                  {daysUntilExpiry !== null && ` (${daysUntilExpiry} days)`}
                 </span>
               </div>
             )}
@@ -111,7 +116,7 @@ const DomainCard = ({ domain }: DomainCardProps) => {
 
       <SheetContent className="w-full max-w-3xl flex flex-col overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>{domain.domain_name}</SheetTitle>
+          <SheetTitle className="text-2xl">{domain.domain_name}</SheetTitle>
         </SheetHeader>
 
         <Tabs defaultValue="whois">
@@ -136,7 +141,7 @@ const DomainCard = ({ domain }: DomainCardProps) => {
           <TabsContent value="whois" className="flex flex-col gap-2">
             <div className="flex items-center justify-end gap-2 my-2">
               {domain.whois_updated_at && (
-                <span className="text-sm font-medium">
+                <span className="text-sm font-medium text-gray-700">
                   Last updated{' '}
                   {formatDistance(
                     new Date(domain.whois_updated_at),
