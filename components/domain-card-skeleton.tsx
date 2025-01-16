@@ -7,7 +7,7 @@ const DomainOverviewSkeleton = () => {
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2">
           <Skeleton className="w-4 h-4 rounded-full" /> {/* Globe icon */}
-          <Skeleton className="h-6 w-32" /> {/* Domain name */}
+          <Skeleton className="h-8 w-32" /> {/* Domain name */}
         </div>
       </CardHeader>
       <CardContent className="flex flex-col gap-2">

@@ -38,18 +38,18 @@ const getStatusDetails = (status: Domain['status']) => {
   switch (status) {
     case 'registered':
       return {
-        color: 'bg-blue-500',
+        color: 'bg-blue-600',
         icon: Lock,
       }
     case 'available':
       return {
-        color: 'bg-green-500',
+        color: 'bg-green-600',
         icon: Check,
       }
     case 'unknown':
     default:
       return {
-        color: 'bg-gray-500',
+        color: 'bg-gray-600',
         icon: CircleHelp,
       }
   }
@@ -69,23 +69,23 @@ const DomainCard = ({ domain }: DomainCardProps) => {
   return (
     <Sheet>
       <SheetTrigger>
-        <Card className="h-full">
+        <Card className="h-full transition transform hover:scale-[1.01] hover:shadow-lg">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-gray-500" />
-              <CardTitle className="text-xl">{domain.domain_name}</CardTitle>
+              <Globe className="w-4 h-4 text-gray-600" />
+              <CardTitle className="text-2xl">{domain.domain_name}</CardTitle>
             </div>
           </CardHeader>
-          <CardContent className="flex flex-col gap-2">
+          <CardContent className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-2">
-                <CircleDot className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-500">Status:</span>
+                <CircleDot className="w-4 h-4 text-gray-600" />
+                <span className="text-sm text-gray-600">Status:</span>
               </div>
               <Badge
                 className={cn(
                   statusDetails.color,
-                  'text-white flex items-center gap-1.5'
+                  'text-white flex items-center gap-1.5 shadow-md'
                 )}
               >
                 <StatusIcon className="w-3 h-3" />
@@ -94,11 +94,11 @@ const DomainCard = ({ domain }: DomainCardProps) => {
             </div>
             {expiryDate && (
               <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-500">
+                <Calendar className="w-4 h-4 text-gray-600" />
+                <span className="text-sm text-gray-600">
                   Expires: {format(expiryDate, 'MMM d, yyyy')}
                   {isExpired && (
-                    <span className="ml-2 text-red-500 font-medium">
+                    <span className="ml-2 text-red-600 font-medium">
                       (Expired)
                     </span>
                   )}
@@ -111,7 +111,7 @@ const DomainCard = ({ domain }: DomainCardProps) => {
 
       <SheetContent className="w-full max-w-3xl flex flex-col overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>{domain.domain_name}</SheetTitle>
+          <SheetTitle className="text-2xl">{domain.domain_name}</SheetTitle>
         </SheetHeader>
 
         <Tabs defaultValue="whois">
@@ -136,7 +136,7 @@ const DomainCard = ({ domain }: DomainCardProps) => {
           <TabsContent value="whois" className="flex flex-col gap-2">
             <div className="flex items-center justify-end gap-2 my-2">
               {domain.whois_updated_at && (
-                <span className="text-sm font-medium">
+                <span className="text-sm font-medium text-gray-700">
                   Last updated{' '}
                   {formatDistance(
                     new Date(domain.whois_updated_at),
