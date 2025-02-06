@@ -1,16 +1,33 @@
 import { PostgrestError } from '@supabase/supabase-js'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import AddDomain from '~/components/add-domain'
 import DomainCard from '~/components/domain-card'
 import DomainOverviewSkeleton from '~/components/domain-card-skeleton'
 import AppLayout from '~/components/layouts/AppLayout'
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
 import { Button } from '~/components/ui/button'
-import { useDomainNamesLiveQuery } from '~/lib/data/domain-names-query'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '~/components/ui/select'
+import {
+  DomainSort,
+  useDomainNamesLiveQuery,
+} from '~/lib/data/domain-names-query'
 import { withAuth } from '~/lib/hocs/with-auth'
 import { NextPageWithLayout } from '~/lib/types'
 
+const sortOptions: { value: DomainSort; label: string }[] = [
+  { value: 'created_at_desc', label: 'Newest first' },
+  { value: 'expiry_date_asc', label: 'Expiring soon' },
+  { value: 'name_asc', label: 'Alphabetically' },
+]
+
 const IndexPage: NextPageWithLayout = () => {
+  const [sort, setSort] = useState<DomainSort>('created_at_desc')
   const {
     data,
     isPending,
@@ -20,7 +37,7 @@ const IndexPage: NextPageWithLayout = () => {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useDomainNamesLiveQuery()
+  } = useDomainNamesLiveQuery(sort)
 
   const count = data?.pages[0]?.count
   const domainNames = useMemo(
@@ -36,6 +53,22 @@ const IndexPage: NextPageWithLayout = () => {
 
       <div className="flex flex-col gap-4">
         <AddDomain />
+
+        <Select
+          value={sort}
+          onValueChange={(value) => setSort(value as DomainSort)}
+        >
+          <SelectTrigger className="w-[180px] self-end">
+            <SelectValue placeholder="Sort by..." />
+          </SelectTrigger>
+          <SelectContent>
+            {sortOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {isPending && (
