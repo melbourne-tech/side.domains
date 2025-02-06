@@ -83,7 +83,7 @@ export function useDomainNamesLiveQuery(sort: DomainSort = 'created_at_desc') {
     return () => {
       channel.unsubscribe()
     }
-  }, [sort])
+  }, [])
 
   const isFinishedLoading = useIsInitialLoadFinished()
 
