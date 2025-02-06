@@ -8,15 +8,31 @@ import supabase from '../supabase'
 
 export type Domain = Database['public']['Tables']['domain_names']['Row']
 
+export type DomainSort = 'created_at_desc' | 'expiry_date_asc' | 'name_asc'
+
 const LIMIT = 30
 
-export async function getDomainNames(page: number, signal?: AbortSignal) {
+export async function getDomainNames(
+  page: number,
+  sort: DomainSort = 'created_at_desc',
+  signal?: AbortSignal
+) {
   const [from, to] = getRange(page, LIMIT)
-  let query = supabase
-    .from('domain_names')
-    .select('*', { count: 'exact' })
-    .order('created_at', { ascending: false })
-    .range(from, to)
+  let query = supabase.from('domain_names').select('*', { count: 'exact' })
+
+  switch (sort) {
+    case 'created_at_desc':
+      query = query.order('created_at', { ascending: false, nullsFirst: false })
+      break
+    case 'expiry_date_asc':
+      query = query.order('expires_at', { ascending: true, nullsFirst: false })
+      break
+    case 'name_asc':
+      query = query.order('domain_name', { ascending: true, nullsFirst: false })
+      break
+  }
+
+  query = query.range(from, to)
 
   if (signal) {
     query = query.abortSignal(signal)
@@ -30,7 +46,7 @@ export async function getDomainNames(page: number, signal?: AbortSignal) {
   return { domainNames: data, count }
 }
 
-export function useDomainNamesLiveQuery() {
+export function useDomainNamesLiveQuery(sort: DomainSort = 'created_at_desc') {
   const queryClient = useQueryClient()
 
   useEffect(() => {
@@ -46,17 +62,19 @@ export function useDomainNamesLiveQuery() {
         (payload) => {
           const updated = payload.new
 
-          queryClient.setQueryData(['domain-names'], (old: any) =>
-            produce(old, (draft) => {
-              for (let page of draft.pages) {
-                for (let domain of page.domainNames) {
-                  if (domain.id === updated.id) {
-                    Object.assign(domain, updated)
-                    return
+          queryClient.setQueriesData(
+            { queryKey: ['domain-names'] },
+            (old: any) =>
+              produce(old, (draft) => {
+                for (let page of draft.pages) {
+                  for (let domain of page.domainNames) {
+                    if (domain.id === updated.id) {
+                      Object.assign(domain, updated)
+                      return
+                    }
                   }
                 }
-              }
-            })
+              })
           )
         }
       )
@@ -65,13 +83,14 @@ export function useDomainNamesLiveQuery() {
     return () => {
       channel.unsubscribe()
     }
-  }, [])
+  }, [sort])
 
   const isFinishedLoading = useIsInitialLoadFinished()
 
   return useInfiniteQuery({
-    queryKey: ['domain-names'],
-    queryFn: async ({ pageParam, signal }) => getDomainNames(pageParam, signal),
+    queryKey: ['domain-names', sort],
+    queryFn: async ({ pageParam, signal }) =>
+      getDomainNames(pageParam, sort, signal),
     enabled: isFinishedLoading,
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
