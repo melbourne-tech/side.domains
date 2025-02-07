@@ -64,7 +64,8 @@ export const StatusChangeNotificationEmail = ({
             <Link href="https://side.domains" style={link}>
               side.domains
             </Link>
-            . If you don't want to receive status notifications for this domain,{' '}
+            . If you don&apos;t want to receive status notifications for this
+            domain,{' '}
             <Link href="https://app.side.domains" style={link}>
               visit the dashboard
             </Link>
