@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
   }
 
   const isSubscribed = userData?.is_subscribed
-  if (!isSubscribed && count >= 1) {
+  if (!isSubscribed && (count ?? 0) >= 1) {
     return new Response(
       JSON.stringify({
         code: 'DOMAIN_LIMIT_REACHED',

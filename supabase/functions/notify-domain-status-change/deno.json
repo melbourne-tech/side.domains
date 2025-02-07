@@ -1,10 +1,10 @@
 {
   "imports": {
-    "@react-email/components": "npm:@react-email/components@^0.0.25",
+    "@react-email/components": "npm:@react-email/components@^0.0.32",
     "@supabase/supabase-js": "jsr:@supabase/supabase-js@^2.45.6",
     "date-fns": "npm:date-fns@^4.1.0",
-    "react": "npm:react@^18.3.1",
-    "react-dom": "npm:react-dom@^18.3.1",
+    "react": "npm:react@^19.0.0",
+    "react-dom": "npm:react-dom@^19.0.0",
     "resend": "npm:resend@^4.1.2",
     "stripe": "npm:stripe@^17.2.1"
   }

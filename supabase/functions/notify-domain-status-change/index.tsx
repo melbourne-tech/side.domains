@@ -1,8 +1,8 @@
-import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
-
 import { createClient } from '@supabase/supabase-js'
+import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
+import React from 'react'
 import { Resend } from 'resend'
-import StatusChangeNotificationEmail from '../_email/StatusChangeNotificationEmail.tsx'
+import StatusChangeNotificationEmail from './_email/StatusChangeNotificationEmail.tsx'
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY')!)
 
@@ -52,12 +52,14 @@ Deno.serve(async (req) => {
     from: 'side.domains Notifications <notifications@side.domains>',
     to: userData.email,
     subject: `Status update for ${data.domain_name}: ${previous_status} → ${new_status}`,
-    react: StatusChangeNotificationEmail({
-      domain_name,
-      previous_status,
-      new_status,
-      updated_at,
-    }),
+    react: (
+      <StatusChangeNotificationEmail
+        domain_name={domain_name}
+        previous_status={previous_status}
+        new_status={new_status}
+        updated_at={updated_at}
+      />
+    ),
   })
 
   if (error) {
