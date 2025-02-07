@@ -1,9 +1,8 @@
-import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
-
-import React from 'react'
 import { createClient } from '@supabase/supabase-js'
+import 'jsr:@supabase/functions-js/edge-runtime.d.ts'
+import React from 'react'
 import { Resend } from 'resend'
-import StatusChangeNotificationEmail from '../_email/StatusChangeNotificationEmail.tsx'
+import StatusChangeNotificationEmail from './_email/StatusChangeNotificationEmail.tsx'
 
 const resend = new Resend(Deno.env.get('RESEND_API_KEY')!)
 

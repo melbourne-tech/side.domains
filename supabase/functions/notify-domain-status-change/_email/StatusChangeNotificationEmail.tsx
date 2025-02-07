@@ -21,7 +21,7 @@ interface StatusChangeNotificationEmailProps {
   updated_at: Date
 }
 
-export const StatusChangeNotificationEmail = ({
+const StatusChangeNotificationEmail = ({
   domain_name,
   previous_status,
   new_status,
