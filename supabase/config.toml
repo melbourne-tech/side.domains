@@ -52,7 +52,7 @@ gcp_jwt_path = "supabase/gcloud.json"
 
 [functions.notify-domain-status-change]
 enabled = true
-entrypoint = "index.tsx"
+entrypoint = "functions/notify-domain-status-change/index.tsx"
 
 [functions.update-whois]
 enabled = true
