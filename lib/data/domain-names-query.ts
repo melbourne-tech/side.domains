@@ -8,17 +8,26 @@ import supabase from '../supabase'
 
 export type Domain = Database['public']['Tables']['domain_names']['Row']
 
-export type DomainSort = 'created_at_desc' | 'expiry_date_asc' | 'name_asc'
+export type DomainSort =
+  | 'created_at_desc'
+  | 'expiry_date_asc'
+  | 'name_asc'
+  | 'available'
 
 const LIMIT = 30
 
 export async function getDomainNames(
   page: number,
   sort: DomainSort = 'created_at_desc',
+  search?: string,
   signal?: AbortSignal
 ) {
   const [from, to] = getRange(page, LIMIT)
   let query = supabase.from('domain_names').select('*', { count: 'exact' })
+
+  if (search) {
+    query = query.ilike('domain_name', `%${search}%`)
+  }
 
   switch (sort) {
     case 'created_at_desc':
@@ -29,6 +38,11 @@ export async function getDomainNames(
       break
     case 'name_asc':
       query = query.order('domain_name', { ascending: true, nullsFirst: false })
+      break
+    case 'available':
+      query = query
+        .order('status', { ascending: false, nullsFirst: false })
+        .order('expires_at', { ascending: true, nullsFirst: false })
       break
   }
 
@@ -46,7 +60,10 @@ export async function getDomainNames(
   return { domainNames: data, count }
 }
 
-export function useDomainNamesLiveQuery(sort: DomainSort = 'created_at_desc') {
+export function useDomainNamesLiveQuery(
+  sort: DomainSort = 'created_at_desc',
+  search?: string
+) {
   const queryClient = useQueryClient()
 
   useEffect(() => {
@@ -88,9 +105,9 @@ export function useDomainNamesLiveQuery(sort: DomainSort = 'created_at_desc') {
   const isFinishedLoading = useIsInitialLoadFinished()
 
   return useInfiniteQuery({
-    queryKey: ['domain-names', sort],
+    queryKey: ['domain-names', sort, search],
     queryFn: async ({ pageParam, signal }) =>
-      getDomainNames(pageParam, sort, signal),
+      getDomainNames(pageParam, sort, search, signal),
     enabled: isFinishedLoading,
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {

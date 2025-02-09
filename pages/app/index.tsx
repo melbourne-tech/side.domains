@@ -1,11 +1,14 @@
 import { PostgrestError } from '@supabase/supabase-js'
+import { Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { useDebounceCallback, useLocalStorage } from 'usehooks-ts'
 import AddDomain from '~/components/add-domain'
 import DomainCard from '~/components/domain-card'
 import DomainOverviewSkeleton from '~/components/domain-card-skeleton'
 import AppLayout from '~/components/layouts/AppLayout'
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert'
 import { Button } from '~/components/ui/button'
+import { Input } from '~/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -21,13 +24,19 @@ import { withAuth } from '~/lib/hocs/with-auth'
 import { NextPageWithLayout } from '~/lib/types'
 
 const sortOptions: { value: DomainSort; label: string }[] = [
-  { value: 'created_at_desc', label: 'Newest first' },
+  { value: 'created_at_desc', label: 'Newest' },
   { value: 'expiry_date_asc', label: 'Expiring soon' },
+  { value: 'available', label: 'Available' },
   { value: 'name_asc', label: 'Alphabetically' },
 ]
 
 const IndexPage: NextPageWithLayout = () => {
-  const [sort, setSort] = useState<DomainSort>('created_at_desc')
+  const [sort, setSort] = useLocalStorage<DomainSort>('sort', 'created_at_desc')
+  const [inputValue, setInputValue] = useState('')
+  const [debouncedValue, setDebouncedValue] = useState('')
+
+  const debouncedSearch = useDebounceCallback(setDebouncedValue, 500)
+
   const {
     data,
     isPending,
@@ -37,7 +46,7 @@ const IndexPage: NextPageWithLayout = () => {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useDomainNamesLiveQuery(sort)
+  } = useDomainNamesLiveQuery(sort, debouncedValue)
 
   const count = data?.pages[0]?.count
   const domainNames = useMemo(
@@ -54,21 +63,34 @@ const IndexPage: NextPageWithLayout = () => {
       <div className="flex flex-col gap-4">
         <AddDomain />
 
-        <Select
-          value={sort}
-          onValueChange={(value) => setSort(value as DomainSort)}
-        >
-          <SelectTrigger className="w-[180px] self-end">
-            <SelectValue placeholder="Sort by..." />
-          </SelectTrigger>
-          <SelectContent>
-            {sortOptions.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="flex flex-col md:flex-row gap-4 md:items-center">
+          <Input
+            before={<Search size={16} />}
+            type="search"
+            placeholder="Search your domains..."
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value)
+              debouncedSearch(e.target.value)
+            }}
+          />
+
+          <Select
+            value={sort}
+            onValueChange={(value) => setSort(value as DomainSort)}
+          >
+            <SelectTrigger className="w-[180px] md:self-auto self-end">
+              <SelectValue placeholder="Sort by..." />
+            </SelectTrigger>
+            <SelectContent>
+              {sortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {isPending && (
@@ -112,9 +134,11 @@ const IndexPage: NextPageWithLayout = () => {
               </>
             ) : (
               <Alert className="md:col-span-2">
-                <AlertTitle>No domains</AlertTitle>
+                <AlertTitle>No domains{debouncedValue && ' found'}</AlertTitle>
                 <AlertDescription>
-                  You don&apos;t have any domains yet. Add one to get started.
+                  {debouncedValue
+                    ? `No domains matching "${debouncedValue}"`
+                    : "You don't have any domains yet. Add one to get started."}
                 </AlertDescription>
               </Alert>
             ))}
