@@ -80,7 +80,7 @@ export function useDomainNamesLiveQuery(
           const updated = payload.new
 
           queryClient.setQueriesData(
-            { queryKey: ['domain-names', sort, search] },
+            { queryKey: ['domain-names'] },
             (old: any) =>
               produce(old, (draft) => {
                 for (let page of draft.pages) {
