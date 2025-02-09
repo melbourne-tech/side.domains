@@ -8,7 +8,11 @@ import supabase from '../supabase'
 
 export type Domain = Database['public']['Tables']['domain_names']['Row']
 
-export type DomainSort = 'created_at_desc' | 'expiry_date_asc' | 'name_asc'
+export type DomainSort =
+  | 'created_at_desc'
+  | 'expiry_date_asc'
+  | 'name_asc'
+  | 'available'
 
 const LIMIT = 30
 
@@ -29,6 +33,11 @@ export async function getDomainNames(
       break
     case 'name_asc':
       query = query.order('domain_name', { ascending: true, nullsFirst: false })
+      break
+    case 'available':
+      query = query
+        .order('status', { ascending: false, nullsFirst: false })
+        .order('expires_at', { ascending: true, nullsFirst: false })
       break
   }
 

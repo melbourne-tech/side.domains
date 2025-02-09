@@ -1,5 +1,6 @@
 import { PostgrestError } from '@supabase/supabase-js'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { useLocalStorage } from 'usehooks-ts'
 import AddDomain from '~/components/add-domain'
 import DomainCard from '~/components/domain-card'
 import DomainOverviewSkeleton from '~/components/domain-card-skeleton'
@@ -21,13 +22,14 @@ import { withAuth } from '~/lib/hocs/with-auth'
 import { NextPageWithLayout } from '~/lib/types'
 
 const sortOptions: { value: DomainSort; label: string }[] = [
-  { value: 'created_at_desc', label: 'Newest first' },
+  { value: 'created_at_desc', label: 'Newest' },
   { value: 'expiry_date_asc', label: 'Expiring soon' },
+  { value: 'available', label: 'Available' },
   { value: 'name_asc', label: 'Alphabetically' },
 ]
 
 const IndexPage: NextPageWithLayout = () => {
-  const [sort, setSort] = useState<DomainSort>('created_at_desc')
+  const [sort, setSort] = useLocalStorage<DomainSort>('sort', 'created_at_desc')
   const {
     data,
     isPending,
