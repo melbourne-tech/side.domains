@@ -19,10 +19,15 @@ const LIMIT = 30
 export async function getDomainNames(
   page: number,
   sort: DomainSort = 'created_at_desc',
+  search?: string,
   signal?: AbortSignal
 ) {
   const [from, to] = getRange(page, LIMIT)
   let query = supabase.from('domain_names').select('*', { count: 'exact' })
+
+  if (search) {
+    query = query.ilike('domain_name', `%${search}%`)
+  }
 
   switch (sort) {
     case 'created_at_desc':
@@ -55,7 +60,10 @@ export async function getDomainNames(
   return { domainNames: data, count }
 }
 
-export function useDomainNamesLiveQuery(sort: DomainSort = 'created_at_desc') {
+export function useDomainNamesLiveQuery(
+  sort: DomainSort = 'created_at_desc',
+  search?: string
+) {
   const queryClient = useQueryClient()
 
   useEffect(() => {
@@ -72,7 +80,7 @@ export function useDomainNamesLiveQuery(sort: DomainSort = 'created_at_desc') {
           const updated = payload.new
 
           queryClient.setQueriesData(
-            { queryKey: ['domain-names'] },
+            { queryKey: ['domain-names', sort, search] },
             (old: any) =>
               produce(old, (draft) => {
                 for (let page of draft.pages) {
@@ -97,9 +105,9 @@ export function useDomainNamesLiveQuery(sort: DomainSort = 'created_at_desc') {
   const isFinishedLoading = useIsInitialLoadFinished()
 
   return useInfiniteQuery({
-    queryKey: ['domain-names', sort],
+    queryKey: ['domain-names', sort, search],
     queryFn: async ({ pageParam, signal }) =>
-      getDomainNames(pageParam, sort, signal),
+      getDomainNames(pageParam, sort, search, signal),
     enabled: isFinishedLoading,
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
