@@ -42,6 +42,11 @@ secret = ""
 redirect_uri = ""
 url = ""
 
+[auth.captcha]
+enabled = true
+provider = "turnstile"
+secret = "env(TURNSTILE_SECRET_KEY)"
+
 [analytics]
 enabled = false
 port = 54327
