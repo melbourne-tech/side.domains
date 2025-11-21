@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile'
 import { MailIcon } from 'lucide-react'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import AppLayout from '~/components/layouts/AppLayout'
@@ -30,6 +31,9 @@ const formSchema = z.object({
 const SignInPage: NextPageWithLayout = () => {
   const router = useRouter()
 
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null)
+  const turnstileRef = useRef<TurnstileInstance | null>(null)
+
   const isSignedIn = useIsSignedIn()
   useEffect(() => {
     if (isSignedIn) {
@@ -49,9 +53,15 @@ const SignInPage: NextPageWithLayout = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { error } = await supabase.auth.signInWithOtp({
       email: values.email,
+      options: {
+        captchaToken: captchaToken ?? undefined,
+      },
     })
 
     if (error) {
+      setCaptchaToken(null)
+      turnstileRef.current?.reset()
+
       toast({
         title: 'Uh oh! Something went wrong.',
         description: error.message,
@@ -67,6 +77,9 @@ const SignInPage: NextPageWithLayout = () => {
 
   useEffect(() => {
     if (form.formState.isSubmitSuccessful) {
+      setCaptchaToken(null)
+      turnstileRef.current?.reset()
+
       form.reset({
         email: '',
       })
@@ -89,10 +102,7 @@ const SignInPage: NextPageWithLayout = () => {
       <OrDivider className="max-w-96 mx-auto" />
 
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-8"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col">
           <FormField
             control={form.control}
             name="email"
@@ -110,11 +120,20 @@ const SignInPage: NextPageWithLayout = () => {
             )}
           />
 
+          <Turnstile
+            ref={turnstileRef}
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            onSuccess={setCaptchaToken}
+            onExpire={() => setCaptchaToken(null)}
+            options={{ appearance: 'interaction-only' }}
+            className="min-h-6 mt-2"
+          />
+
           <Button
             type="submit"
             variant="outline"
             isLoading={form.formState.isSubmitting}
-            disabled={form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting || !captchaToken}
             className="self-end"
           >
             <MailIcon className="w-4 h-4" />
